@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Envio de Documento - Ecossis</title>
+    <style>
+        /* Paleta de cores baseada no ecossis.com */
+        :root {
+            --primary-color: #005f8d;
+            --secondary-color: #00a8e8;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 20px 0;
+        }
+        header img {
+            max-width: 200px;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .form-container h2 {
+            color: var(--primary-color);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input[type="file"],
+        .form-group input[type="submit"],
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .form-group input[type="submit"] {
+            background-color: var(--primary-color);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .form-group input[type="submit"]:hover {
+            background-color: var(--secondary-color);
+        }
+        .nft-button {
+            text-align: center;
+        }
+        .nft-button button {
+            background-color: var(--primary-color);
+            border: none;
+            color: #fff;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .nft-button button:hover {
+            background-color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+        <img src="logo-ecossis.png" alt="Logo Ecossis">
+        </header>
+        
+        <div class="form-container">
+            <h2>Envio de Documento</h2>
+            
+            <form action="https://upload-service-function-236688625650.southamerica-east1.run.app" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="documento">Selecione o documento:</label>
+                    <input type="file" id="documento" name="documento" required>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Enviar Documento">
+                </div>
+            </form>
+        </div>
+        
+        <div class="nft-button">
+            <!-- Botão para consultar o NFT; a funcionalidade será implementada posteriormente -->
+            <button onclick="consultarNFT()">Consultar NFT</button>
+        </div>
+    </div>
+
+    <script>
+        function consultarNFT() {
+            // Função placeholder para a consulta do NFT.
+            // Aqui você poderá implementar a chamada para o endpoint de consulta do NFT futuramente.
+            alert("Funcionalidade de consulta de NFT será implementada em breve.");
+        }
+    </script>
+</body>
+</html>
