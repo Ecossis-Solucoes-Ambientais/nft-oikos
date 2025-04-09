@@ -49,9 +49,13 @@
         .form-group input[type="file"],
         .form-group input[type="submit"],
         .form-group button {
-            width: 100%;
-            padding: 10px;
+            background-color: var(--primary-color);
+            border: none;
+            color: #fff;
+            padding: 12px 25px;
             font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
         }
         .form-group input[type="submit"] {
             background-color: var(--primary-color);
@@ -126,7 +130,7 @@
             const formData = new FormData(form);
 
             // Faz a requisição ao endpoint usando fetch
-            fetch('SEU_ENDPOINT_AQUI', {
+            fetch('https://upload-service-function-236688625650.southamerica-east1.run.app/upload', {
                 method: 'POST',
                 body: formData
             })
