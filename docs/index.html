@@ -65,6 +65,7 @@
         }
         .nft-button {
             text-align: center;
+            margin-top: 20px;
         }
         .nft-button button {
             background-color: var(--primary-color);
@@ -78,26 +79,32 @@
         .nft-button button:hover {
             background-color: var(--secondary-color);
         }
+        /* Estilo para a mensagem (opcional) */
+        .mensagem {
+            margin-top: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-        <img src="logo-png-1-1.png" alt="Logo Ecossis">
+            <img src="logo-png-1-1.png" alt="Logo Ecossis">
         </header>
         
         <div class="form-container">
             <h2>Envio de Documento</h2>
-            
-            <form action="https://upload-service-function-236688625650.southamerica-east1.run.app/upload" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="documento">Selecione o documento:</label>
-                    <input type="file" id="documento" name="file" required>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Enviar Documento">
-                </div>
+            <!-- Removemos o action e method para usar JavaScript -->
+            <form id="formEnvio" enctype="multipart/form-data">
+                <label for="documento">Selecione o documento:</label>
+                <br><br>
+                <input type="file" id="documento" name="documento" required>
+                <br><br>
+                <button type="submit">Enviar Documento</button>
             </form>
+            
+            <!-- Exibir mensagem de sucesso ou erro -->
+            <div id="mensagem" class="mensagem"></div>
         </div>
         
         <div class="nft-button">
@@ -107,9 +114,37 @@
     </div>
 
     <script>
+        // Captura o formulário e a div para mensagem
+        const form = document.getElementById('formEnvio');
+        const mensagemDiv = document.getElementById('mensagem');
+
+        // Escuta o evento de submissão do formulário
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Impede o comportamento padrão de recarregar a página
+
+            // Cria um FormData com o arquivo selecionado
+            const formData = new FormData(form);
+
+            // Faz a requisição ao endpoint usando fetch
+            fetch('SEU_ENDPOINT_AQUI', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Exibe a mensagem retornada pelo servidor
+                mensagemDiv.textContent = data.message;
+                mensagemDiv.style.color = 'green';
+            })
+            .catch(error => {
+                console.error(error);
+                mensagemDiv.textContent = 'Ocorreu um erro ao enviar o arquivo.';
+                mensagemDiv.style.color = 'red';
+            });
+        });
+
+        // Função placeholder para consulta do NFT
         function consultarNFT() {
-            // Função placeholder para a consulta do NFT.
-            // Aqui você poderá implementar a chamada para o endpoint de consulta do NFT futuramente.
             alert("Funcionalidade de consulta de NFT será implementada em breve.");
         }
     </script>
