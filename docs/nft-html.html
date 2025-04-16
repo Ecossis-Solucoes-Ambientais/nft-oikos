@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Certificado Blockchain</title>
+  <title>Certificado Oikos Blockchain</title>
   <style>
     @font-face {
       font-family: 'Sackers Gothic';
-      src: url('SackersGothicStd.ttf') format('truetype'); /* Atualize com o caminho correto do arquivo */
+      src: url('SackersGothicStd.ttf') format('truetype');
     }
-
     body {
       font-family: Arial, sans-serif;
       background-color: #ffffff;
@@ -20,7 +19,6 @@
       align-items: center;
       height: 100vh;
     }
-
     .certificado {
       width: 210mm;
       height: 297mm;
@@ -33,17 +31,14 @@
       box-sizing: border-box;
       color: #ffffff;
     }
-
     .logo {
       display: flex;
       justify-content: center;
       margin-bottom: 20px;
     }
-
     .logo img {
       height: 90px;
     }
-
     .titulo {
       text-align: center;
       font-size: 36px;
@@ -51,76 +46,61 @@
       margin-bottom: 10px;
       font-family: 'Sackers Gothic', Arial, sans-serif;
     }
-
     .subtitulo {
       text-align: center;
       font-size: 18px;
       margin-bottom: 30px;
     }
-
     .info {
       margin-bottom: 20px;
     }
-
     .info p {
       margin: 10px 0;
       font-size: 16px;
     }
-
     .qr-code-section {
       display: flex;
       align-items: flex-start;
       margin-top: 20px;
     }
-
     .qr-code {
       margin-right: 20px;
     }
-
     .qr-code img {
       height: 150px;
       width: 150px;
     }
-
     .details {
       flex: 1;
     }
-
     .details p {
       margin: 5px 0;
       font-size: 16px;
     }
-
     .footer {
       text-align: center;
       font-size: 14px;
       margin-top: 30px;
     }
-
     .link-transacao {
-      margin-bottom: 100px; /* Espaçamento entre o link e a logo */
+      margin-bottom: 100px;
     }
-
     .link-transacao a {
       color: #ffffff;
       text-decoration: underline;
       font-size: 14px;
     }
-
     .link-transacao a:hover {
       text-decoration: none;
       color: #00aced;
     }
-
     .footer-logo {
       display: flex;
       justify-content: center;
     }
-
     .footer-logo img {
       height: 40px;
     }
-
     .editable {
       color: #ffffff;
     }
@@ -131,32 +111,55 @@
     <div class="logo">
       <img src="https://ecossis.com/www1/wp-content/uploads/2025/01/LOGO-Oikos-1-1-e1736792715703.png" alt="Iniciativa Oikos">
     </div>
-    <div class="titulo editable" contenteditable="true">Certificado Blockchain</div>
-    <div class="subtitulo editable" contenteditable="true">Notorizado com</div>
+    <div class="titulo editable" contenteditable="true" id="titulo-certificado">Certificado Oikos Blockchain</div>
+    <div class="subtitulo editable" contenteditable="true" id="subtitulo-certificado">Notorizado com Sepolia ETH</div>
     <div class="info">
-      <p><strong>Timestamp:</strong> <span class="editable" contenteditable="true">10/01/2025 - 17:17</span></p>
-      <p><strong>Comentário:</strong> <span class="editable" contenteditable="true">Modelo de certificado</span></p>
+      <p><strong>Timestamp:</strong> <span class="editable" contenteditable="true" id="timestamp">10/01/2025 - 17:17</span></p>
+      <p><strong>Comentário:</strong> <span class="editable" contenteditable="true" id="comentario">Modelo de certificado</span></p>
     </div>
     <div class="qr-code-section">
       <!-- QR Code -->
       <div class="qr-code">
-        <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https://seulink.com" alt="QR Code">
+        <img id="qr-code" src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https://seulink.com" alt="QR Code">
       </div>
-      <!-- Details Section -->
+      <!-- Detalhes -->
       <div class="details">
-        <p><strong>Hash:</strong> <span class="editable" contenteditable="true">CÓDIGO HASH</span></p>
-        <p><strong>Transação:</strong> <span class="editable" contenteditable="true">DETALHES</span></p>
-        <p><strong>Chave privada:</strong> <span class="editable" contenteditable="true">CHAVE</span></p>
+        <p><strong>Hash:</strong> <span class="editable" contenteditable="true" id="hash-value">CÓDIGO HASH</span></p>
+        <p><strong>Transação:</strong> <span class="editable" contenteditable="true" id="transaction-value">DETALHES</span></p>
+        <p><strong>Arquivo:</strong> <span class="editable" contenteditable="true" id="file-name">NOME DO ARQUIVO</span></p>
       </div>
     </div>
     <div class="footer">
       <div class="link-transacao">
-        <a href="https://exemplo.com" target="_blank" contenteditable="true">Link para verificar a transação</a>
+        <a id="link-transacao" href="https://exemplo.com" target="_blank" contenteditable="true">Link para verificar a transação</a>
       </div>
       <div class="footer-logo">
         <img src="https://ecossis.com/www1/wp-content/uploads/2024/06/logo-png-1-1.png" alt="Logo Ecossis">
       </div>
     </div>
   </div>
-</body>
-</html>
+
+  <script>
+    // Ao carregar a página, realiza a chamada para obter o registro mais recente
+    window.addEventListener('DOMContentLoaded', () => {
+      const endpoint = 'https://consulta-service-function-236688625650.southamerica-east1.run.app/get_ipfs_hashes?last_records=1';
+      
+      fetch(endpoint)
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.length > 0) {
+            const registro = data[0];
+            document.getElementById('hash-value').textContent = registro.hash || 'N/D';
+
+            const txHash = registro.transaction_hash || '';
+            const txLink = `https://sepolia.etherscan.io/tx/${txHash}`;
+            const linkElem = document.getElementById('link-transacao');
+            linkElem.href = txLink;
+            linkElem.textContent = txLink;
+            const qrElem = document.getElementById('qr-code');
+            qrElem.src = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(txLink)}`; // :contentReference[oaicite:2]{index=2}
+
+    
+    }
+  })
+  .catch(error => console.error(error));
