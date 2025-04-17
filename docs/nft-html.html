@@ -2,164 +2,120 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Certificado Oikos Blockchain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Consulta de Certificado</title>
   <style>
-    @font-face {
-      font-family: 'Sackers Gothic';
-      src: url('SackersGothicStd.ttf') format('truetype');
-    }
     body {
       font-family: Arial, sans-serif;
-      background-color: #ffffff;
+      background: #f4f4f4;
       margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      padding: 20px;
     }
-    .certificado {
-      width: 210mm;
-      height: 297mm;
-      background: url('https://ecossis.com/www1/wp-content/uploads/2025/01/Certificado-Blockchain-1.png') no-repeat center center/cover;
-      padding: 30mm 20mm;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-sizing: border-box;
-      color: #ffffff;
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .logo {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .logo img {
-      height: 90px;
-    }
-    .titulo {
+    h1 {
       text-align: center;
-      font-size: 36px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      font-family: 'Sackers Gothic', Arial, sans-serif;
+      color: #005f8d;
     }
-    .subtitulo {
+    .preview {
       text-align: center;
-      font-size: 18px;
-      margin-bottom: 30px;
+      margin: 20px 0;
     }
-    .info {
-      margin-bottom: 20px;
+    .preview img {
+      max-width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 4px;
     }
     .info p {
-      margin: 10px 0;
+      margin: 8px 0;
       font-size: 16px;
     }
-    .qr-code-section {
-      display: flex;
-      align-items: flex-start;
-      margin-top: 20px;
-    }
-    .qr-code {
-      margin-right: 20px;
-    }
-    .qr-code img {
-      height: 150px;
-      width: 150px;
-    }
-    .details {
-      flex: 1;
-    }
-    .details p {
-      margin: 5px 0;
-      font-size: 16px;
-    }
-    .footer {
-      text-align: center;
-      font-size: 14px;
-      margin-top: 30px;
-    }
-    .link-transacao {
-      margin-bottom: 100px;
-    }
-    .link-transacao a {
-      color: #ffffff;
-      text-decoration: underline;
-      font-size: 14px;
-    }
-    .link-transacao a:hover {
+    .info a {
+      color: #00a8e8;
       text-decoration: none;
-      color: #00aced;
     }
-    .footer-logo {
-      display: flex;
-      justify-content: center;
-    }
-    .footer-logo img {
-      height: 40px;
-    }
-    .editable {
-      color: #ffffff;
+    .info a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="certificado">
-    <div class="logo">
-      <img src="https://ecossis.com/www1/wp-content/uploads/2025/01/LOGO-Oikos-1-1-e1736792715703.png" alt="Iniciativa Oikos">
+  <div class="container">
+    <h1>Certificado Blockchain</h1>
+
+    <div class="preview">
+      <img id="cert-image" src="" alt="Imagem do Certificado">
     </div>
-    <div class="titulo editable" contenteditable="true" id="titulo-certificado">Certificado Oikos Blockchain</div>
-    <div class="subtitulo editable" contenteditable="true" id="subtitulo-certificado">Notorizado com Sepolia ETH</div>
+
     <div class="info">
-      <p><strong>Timestamp:</strong> <span class="editable" contenteditable="true" id="timestamp">10/01/2025 - 17:17</span></p>
-      <p><strong>Comentário:</strong> <span class="editable" contenteditable="true" id="comentario">Modelo de certificado</span></p>
-    </div>
-    <div class="qr-code-section">
-      <!-- QR Code -->
-      <div class="qr-code">
-        <img id="qr-code" src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https://seulink.com" alt="QR Code">
-      </div>
-      <!-- Detalhes -->
-      <div class="details">
-        <p><strong>Hash:</strong> <span class="editable" contenteditable="true" id="hash-value">CÓDIGO HASH</span></p>
-        <p><strong>Transação:</strong> <span class="editable" contenteditable="true" id="transaction-value">DETALHES</span></p>
-        <p><strong>Arquivo:</strong> <span class="editable" contenteditable="true" id="file-name">NOME DO ARQUIVO</span></p>
-      </div>
-    </div>
-    <div class="footer">
-      <div class="link-transacao">
-        <a id="link-transacao" href="https://exemplo.com" target="_blank" contenteditable="true">Link para verificar a transação</a>
-      </div>
-      <div class="footer-logo">
-        <img src="https://ecossis.com/www1/wp-content/uploads/2024/06/logo-png-1-1.png" alt="Logo Ecossis">
-      </div>
+      <p><strong>Arquivo:</strong> <span id="file-name">Carregando...</span></p>
+      <p><strong>Hash Original:</strong> <span id="original-hash">—</span></p>
+      <p><strong>Hash da Imagem:</strong> <span id="image-hash">—</span></p>
+      <p><strong>Transação NFT Arquivo:</strong>
+         <a id="tx-link-file" href="#" target="_blank">—</a>
+      </p>
+      <p><strong>Transação NFT Imagem:</strong>
+         <a id="tx-link-image" href="#" target="_blank">—</a>
+      </p>
     </div>
   </div>
 
   <script>
-    // Ao carregar a página, realiza a chamada para obter o registro mais recente
     window.addEventListener('DOMContentLoaded', () => {
-      const endpoint = 'https://consulta-service-function-236688625650.southamerica-east1.run.app/get_ipfs_hashes?last_records=1';
-      
+      const endpoint = 
+        'https://consulta-service-function-236688625650.southamerica-east1.run.app/get_ipfs_hashes?last_records=1';
+
       fetch(endpoint)
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
-          if (data && data.length > 0) {
-            const registro = data[0];
-            document.getElementById('hash-value').textContent = registro.hash || 'N/D';
+          if (!data || data.length === 0) {
+            throw new Error('Nenhum registro encontrado');
+          }
+          const rec = data[0];
 
-            const txHash = registro.transaction_hash || '';
-            const txLink = `https://sepolia.etherscan.io/tx/${txHash}`;
-            const linkElem = document.getElementById('link-transacao');
-            linkElem.href = txLink;
-            linkElem.textContent = txLink;
-            const qrElem = document.getElementById('qr-code');
-            qrElem.src = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(txLink)}`; // :contentReference[oaicite:2]{index=2}
+          // Imagem gerada
+          const imgUri = rec.image_token_uri || '';
+          document.getElementById('cert-image').src = imgUri;
 
-    
-    }
-  })
-  .catch(error => console.error(error));
+          // Dados de texto
+          document.getElementById('file-name').textContent = rec.file_name || 'N/D';
+          document.getElementById('original-hash').textContent = rec.hash || 'N/D';
+          document.getElementById('image-hash').textContent = 
+            imgUri.split('/').pop() || 'N/D';
+
+          // Links de transação
+          const fileTx = rec.transaction_hash;
+          const imgTx = rec.image_nft_tx;
+          const etherscanBase = 'https://sepolia.etherscan.io/tx/';
+
+          const linkFile = document.getElementById('tx-link-file');
+          if (fileTx) {
+            linkFile.href = etherscanBase + fileTx;
+            linkFile.textContent = fileTx;
+          } else {
+            linkFile.textContent = 'N/D';
+          }
+
+          const linkImage = document.getElementById('tx-link-image');
+          if (imgTx) {
+            linkImage.href = etherscanBase + imgTx;
+            linkImage.textContent = imgTx;
+          } else {
+            linkImage.textContent = 'N/D';
+          }
+        })
+        .catch(err => {
+          document.querySelector('.container').innerHTML = 
+            `<p style="color:red; text-align:center;">${err.message}</p>`;
+          console.error(err);
+        });
+    });
+  </script>
+</body>
+</html>
