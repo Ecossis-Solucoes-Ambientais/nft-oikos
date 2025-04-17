@@ -1,152 +1,119 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <title>Envio de Documento - Ecossis</title>
-    <style>
-        /* Paleta de cores baseada no ecossis.com */
-        :root {
-            --primary-color: #005f8d;
-            --secondary-color: #00a8e8;
-            --background-color: #385710;
-            --text-color: #333;
-        }
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: var(--background-color);
-            color: var(--text-color);
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        header {
-            text-align: center;
-            padding: 20px 0;
-        }
-        header img {
-            max-width: 200px;
-        }
-        .form-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .form-container h2 {
-            color: var(--primary-color);
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input[type="file"],
-        .form-group input[type="submit"],
-        .form-group button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-        }
-        .form-group input[type="submit"] {
-            background-color: var(--primary-color);
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .form-group input[type="submit"]:hover {
-            background-color: var(--secondary-color);
-        }
-        .nft-button {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .nft-button button {
-            background-color: var(--primary-color);
-            border: none;
-            color: #fff;
-            padding: 12px 25px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .nft-button button:hover {
-            background-color: var(--secondary-color);
-        }
-        /* Estilo para a mensagem (opcional) */
-        .mensagem {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Envio de Documento - Ecossis</title>
+  <style>
+    :root {
+      --primary-color: #005f8d;
+      --secondary-color: #00a8e8;
+      --background-color: #385710;
+      --text-color: #333;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans‑serif;
+      background: var(--background-color);
+      color: var(--text-color);
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      padding: 20px 0;
+    }
+    header img {
+      max-width: 200px;
+    }
+    .form-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .form-container h2 {
+      color: var(--primary-color);
+    }
+    .mensagem {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .nft-button {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .nft-button button {
+      background-color: var(--primary-color);
+      border: none;
+      color: #fff;
+      padding: 12px 25px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .nft-button button:hover {
+      background-color: var(--secondary-color);
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <img src="logo-png-1-1.png" alt="Logo Ecossis">
-        </header>
-        
-        <div class="form-container">
-            <h2>Envio de Documento</h2>
-            
-            <form id="formEnvio" enctype="multipart/form-data">
-                <label for="documento">Selecione o documento:</label>
-                <br><br>
-                <input type="file" id="documento" name="file" required>
-                <br><br>
-                <button type="submit">Enviar Documento</button>
-            </form>
-            
-            <!-- Exibir mensagem de sucesso ou erro -->
-            <div id="mensagem" class="mensagem"></div>
-        </div>
-        
-        <div class="nft-button">
-            
-            <button onclick="consultarNFT()">Consultar NFT</button>
-        </div>
+  <!-- iframe oculto para receber a resposta do upload sem CORS -->
+  <iframe name="uploadFrame" style="display:none;"></iframe>
+
+  <div class="container">
+    <header>
+      <img src="logo-png-1-1.png" alt="Logo Ecossis">
+    </header>
+    <div class="form-container">
+      <h2>Envio de Documento</h2>
+      <form id="formEnvio"
+            action="https://upload-service-function-236688625650.southamerica-east1.run.app/upload"
+            method="POST"
+            enctype="multipart/form-data"
+            target="uploadFrame">
+        <label for="documento">Selecione o documento:</label><br><br>
+        <input type="file" id="documento" name="file" required><br><br>
+        <button type="submit">Enviar Documento</button>
+      </form>
+      <div id="mensagem" class="mensagem"></div>
     </div>
 
-    <script>
-        // Captura o formulário e a div para mensagem
-        const form = document.getElementById('formEnvio');
-        const mensagemDiv = document.getElementById('mensagem');
+    <div class="nft-button">
+      <a href="consulta.html">
+        <button>Consultar NFT</button>
+      </a>
+    </div>
+  </div>
 
-        // Escuta o evento de submissão do formulário
-        form.addEventListener('submit', function (e) {
-            e.preventDefault(); // Impede o comportamento padrão de recarregar a página
+  <script>
+    // Captura a resposta JSON no iframe e exibe a mensagem
+    const frame = document.getElementsByName('uploadFrame')[0];
+    const mensagemDiv = document.getElementById('mensagem');
 
-            // Cria um FormData com o arquivo selecionado
-            const formData = new FormData(form);
-
-            // Faz a requisição ao endpoint usando fetch
-            fetch('https://upload-service-function-236688625650.southamerica-east1.run.app/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Exibe a mensagem retornada pelo servidor
-                mensagemDiv.textContent = data.message;
-                mensagemDiv.style.color = 'green';
-            })
-            .catch(error => {
-                console.error(error);
-                mensagemDiv.textContent = 'Ocorreu um erro ao enviar o arquivo.';
-                mensagemDiv.style.color = 'red';
-            });
-        });
-
-        // Função placeholder para consulta do NFT
-        function consultarNFT() {
-            window.location.href = "https://ecossis-solucoes-ambientais.github.io/nft-oikos/nft-html.html";
+    frame.addEventListener('load', () => {
+      try {
+        const doc = frame.contentDocument || frame.contentWindow.document;
+        const text = doc.body.innerText.trim();
+        const data = JSON.parse(text);
+        if (data.message) {
+          mensagemDiv.textContent = data.message;
+          mensagemDiv.style.color = 'green';
+        } else if (data.error) {
+          mensagemDiv.textContent = data.error;
+          mensagemDiv.style.color = 'red';
+        } else {
+          mensagemDiv.textContent = 'Upload concluído.';
+          mensagemDiv.style.color = 'black';
         }
-    </script>
+      } catch (e) {
+        mensagemDiv.textContent = 'Resposta inválida do servidor.';
+        mensagemDiv.style.color = 'red';
+      }
+    });
+  </script>
 </body>
 </html>
