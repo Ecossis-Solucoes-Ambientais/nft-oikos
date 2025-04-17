@@ -2,120 +2,51 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Consulta de Certificado</title>
+  <title>Visualização NFT</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background: #fff;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #005f8d;
-    }
-    .preview {
-      text-align: center;
-      margin: 20px 0;
-    }
-    .preview img {
-      max-width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    .info p {
-      margin: 8px 0;
-      font-size: 16px;
-    }
-    .info a {
-      color: #00a8e8;
-      text-decoration: none;
-    }
-    .info a:hover {
-      text-decoration: underline;
-    }
+    body { font-family: Arial, sans-serif; background:#f4f4f4; padding:20px; }
+    .card { max-width:400px; margin:0 auto; background:#fff; border-radius:8px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.1); padding:16px; text-align:center; }
+    .card img { max-width:100%; border-radius:4px; }
+    .card h2 { margin:12px 0 4px; color:#005f8d; }
+    .card p { margin:4px 0; font-size:14px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Certificado Blockchain</h1>
-
-    <div class="preview">
-      <img id="cert-image" src="" alt="Imagem do Certificado">
-    </div>
-
-    <div class="info">
-      <p><strong>Arquivo:</strong> <span id="file-name">Carregando...</span></p>
-      <p><strong>Hash Original:</strong> <span id="original-hash">—</span></p>
-      <p><strong>Hash da Imagem:</strong> <span id="image-hash">—</span></p>
-      <p><strong>Transação NFT Arquivo:</strong>
-         <a id="tx-link-file" href="#" target="_blank">—</a>
-      </p>
-      <p><strong>Transação NFT Imagem:</strong>
-         <a id="tx-link-image" href="#" target="_blank">—</a>
-      </p>
-    </div>
+  <div class="card">
+    <!-- Imagem IPFS via gateway HTTP -->
+    <img id="nft-image" src="" alt="NFT Image">
+    <h2 id="nft-title">Carregando...</h2>
+    <p id="nft-description"></p>
+    <p><strong>CID da Imagem:</strong> <span id="image-cid"></span></p>
+    <p><strong>CID dos Metadados:</strong> <span id="meta-cid"></span></p>
   </div>
 
   <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const endpoint = 
-        'https://consulta-service-function-236688625650.southamerica-east1.run.app/get_ipfs_hashes?last_records=1';
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      // 1) Defina seus CIDs
+      const metaCid  = '4463c609-c0da-4be8-a9df-4c3003037ab6';
+      const gateway  = 'https://indigo-past-lamprey-584.mypinata.cloud/ipfs/QmaiDcPSix45SAhqg4CQau3J9AUTGhLWuFNMHhzmRwePuy?pinataGatewayToken=pA-g5W3SdX3OfSICbl_jU3-E_hyc1A6YDO6AjwZHHPpnc1IB3d54SxdHU9wjDii2';
 
-      fetch(endpoint)
-        .then(res => res.json())
-        .then(data => {
-          if (!data || data.length === 0) {
-            throw new Error('Nenhum registro encontrado');
-          }
-          const rec = data[0];
+      // 2) Buscar metadados JSON do IPFS
+      const resMeta = await fetch(gateway + metaCid);
+      const meta    = await resMeta.json();                           // :contentReference[oaicite:5]{index=5}
 
-          // Imagem gerada
-          const imgUri = rec.image_token_uri || '';
-          document.getElementById('cert-image').src = imgUri;
-
-          // Dados de texto
-          document.getElementById('file-name').textContent = rec.file_name || 'N/D';
-          document.getElementById('original-hash').textContent = rec.hash || 'N/D';
-          document.getElementById('image-hash').textContent = 
-            imgUri.split('/').pop() || 'N/D';
-
-          // Links de transação
-          const fileTx = rec.transaction_hash;
-          const imgTx = rec.image_nft_tx;
-          const etherscanBase = 'https://sepolia.etherscan.io/tx/';
-
-          const linkFile = document.getElementById('tx-link-file');
-          if (fileTx) {
-            linkFile.href = etherscanBase + fileTx;
-            linkFile.textContent = fileTx;
-          } else {
-            linkFile.textContent = 'N/D';
-          }
-
-          const linkImage = document.getElementById('tx-link-image');
-          if (imgTx) {
-            linkImage.href = etherscanBase + imgTx;
-            linkImage.textContent = imgTx;
-          } else {
-            linkImage.textContent = 'N/D';
-          }
-        })
-        .catch(err => {
-          document.querySelector('.container').innerHTML = 
-            `<p style="color:red; text-align:center;">${err.message}</p>`;
-          console.error(err);
-        });
-    });
+      // 3) Atualizar elementos do DOM
+      document.getElementById('nft-title').textContent       = meta.name    || 'Sem título';
+      document.getElementById('nft-description').textContent = meta.description || 'Sem descrição';
+      document.getElementById('meta-cid').textContent        = metaCid;
+      
+      // 4) Exibir imagem
+      let imageCid = meta.image.replace('ipfs://', '');
+      document.getElementById('nft-image').src = gateway + imageCid;
+      document.getElementById('image-cid').textContent = imageCid;
+    } catch (err) {
+      console.error('Erro ao carregar NFT:', err);
+      document.querySelector('.card').innerHTML = '<p>Falha ao carregar dados do NFT.</p>';
+    }
+  });
   </script>
 </body>
 </html>
