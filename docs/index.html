@@ -61,10 +61,27 @@
   </style>
 </head>
 <body>
+    <frame name="uploadFrame" style="display:none;"></frame>
+    <header>
     <form id="formEnvio"
     action="https://upload-service-function-236688625650.southamerica-east1.run.app/upload"
     method="POST"
     enctype="multipart/form-data">
+    <img src="https://ecossis.com.br/wp-content/uploads/2023/09/logo_ecossis.png" alt="Logo Ecossis">
+  </header>
+  <div class="container">
+    <div class="form-container">
+      <h2>Envio de Documento</h2>
+      <p>Carregue seu arquivo para gerar o NFT.</p>
+      <div id="mensagem" class="mensagem"></div>
+    </div>
+    <form id="formEnvio" action="https://upload-service-function-236688625650.southamerica-east1.run.app/upload" method="POST" enctype="multipart/form-data" target="uploadFrame">
+      <input type="hidden" name="name" value="documento">
+      <input type="hidden" name="action" value="upload">
+      <input type="hidden" name="description" value="Documento para geração de NFT">
+      <input type="hidden" name="type" value="application/pdf">
+      <input type="hidden" name="token" value="YOUR_TOKEN_HERE">
+      <input type="hidden" name="callback_url" value="https://ecossis.com.br/callback">
 <label for="documento">Selecione o documento:</label><br><br>
 <input type="file" id="documento" name="file" required><br><br>
 <button type="submit">Enviar Documento</button>
