@@ -61,26 +61,14 @@
   </style>
 </head>
 <body>
-  <!-- iframe oculto para receber a resposta do upload sem CORS -->
-  <iframe name="uploadFrame" style="display:none;"></iframe>
-
-  <div class="container">
-    <header>
-      <img src="logo-png-1-1.png" alt="Logo Ecossis">
-    </header>
-    <div class="form-container">
-      <h2>Envio de Documento</h2>
-      <form id="formEnvio"
-            action="https://upload-service-function-236688625650.southamerica-east1.run.app/upload"
-            method="POST"
-            enctype="multipart/form-data"
-            target="uploadFrame">
-        <label for="documento">Selecione o documento:</label><br><br>
-        <input type="file" id="documento" name="file" required><br><br>
-        <button type="submit">Enviar Documento</button>
-      </form>
-      <div id="mensagem" class="mensagem"></div>
-    </div>
+    <form id="formEnvio"
+    action="https://upload-service-function-236688625650.southamerica-east1.run.app/upload"
+    method="POST"
+    enctype="multipart/form-data">
+<label for="documento">Selecione o documento:</label><br><br>
+<input type="file" id="documento" name="file" required><br><br>
+<button type="submit">Enviar Documento</button>
+</form>
 
     <div class="nft-button">
       <a href="consulta.html">
