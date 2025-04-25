@@ -94,26 +94,40 @@
     </div>
   </div>
 
-  <script>
-    // Captura a resposta JSON no iframe e exibe a mensagem
-    const frame = document.getElementsByName('uploadFrame')[0];
-    const mensagemDiv = document.getElementById('mensagem');
-
-    window.addEventListener('message', event => {
-      try {
-        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-        if (data.message) {
-          mensagemDiv.textContent = data.message;
-          mensagemDiv.style.color = 'green';
-        } else if (data.error) {
-          mensagemDiv.textContent = data.error;
+      <script>
+      const form = document.getElementById('formEnvio');
+      const mensagemDiv = document.getElementById('mensagem');
+      const frame = document.getElementsByName('uploadFrame')[0];
+  
+      // 1) Feedback imediato ao clicar em Enviar
+      form.addEventListener('submit', () => {
+        mensagemDiv.textContent = 'Enviando documento, aguarde…';
+        mensagemDiv.style.color = 'black';
+      });
+  
+      // 2) Recebe o postMessage do iframe com o resultado do upload
+      window.addEventListener('message', event => {
+        try {
+          const data = typeof event.data === 'string'
+            ? JSON.parse(event.data)
+            : event.data;
+  
+          if (data.message) {
+            mensagemDiv.textContent = data.message;
+            mensagemDiv.style.color = 'green';
+          } else if (data.error) {
+            mensagemDiv.textContent = data.error;
+            mensagemDiv.style.color = 'red';
+          } else {
+            mensagemDiv.textContent = 'Upload concluído.';
+            mensagemDiv.style.color = 'black';
+          }
+        } catch (e) {
+          mensagemDiv.textContent = 'Resposta inválida do servidor.';
           mensagemDiv.style.color = 'red';
         }
-      } catch (e) {
-        mensagemDiv.textContent = 'Resposta inválida do servidor.';
-        mensagemDiv.style.color = 'red';
-      }
-    });
-  </script>
+      });
+    </script>
+  
 </body>
 </html>
