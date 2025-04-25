@@ -12,7 +12,7 @@
     }
     body {
       margin: 0;
-      font-family: Arial, sans‑serif;
+      font-family: Arial, sans-serif;
       background: var(--background-color);
       color: var(--text-color);
     }
@@ -38,6 +38,9 @@
     .form-container h2 {
       color: var(--primary-color);
     }
+    .form-container p {
+      margin: 10px 0;
+    }
     .mensagem {
       margin-top: 10px;
       font-weight: bold;
@@ -46,7 +49,7 @@
       text-align: center;
       margin-top: 20px;
     }
-    .nft-button button {
+    .nft-button a button {
       background-color: var(--primary-color);
       border: none;
       color: #fff;
@@ -55,37 +58,34 @@
       cursor: pointer;
       border-radius: 4px;
     }
-    .nft-button button:hover {
+    .nft-button a button:hover {
       background-color: var(--secondary-color);
     }
   </style>
 </head>
 <body>
-    <frame name="uploadFrame" style="display:none;"></frame>
-    <header>
-    <form id="formEnvio"
-    action="https://upload-service-function-236688625650.southamerica-east1.run.app/upload"
-    method="POST"
-    enctype="multipart/form-data">
-    <img src="https://ecossis.com.br/wp-content/uploads/2023/09/logo_ecossis.png" alt="Logo Ecossis">
-  </header>
+  <!-- iframe oculto para resposta do upload -->
+  <iframe name="uploadFrame" style="display:none;"></iframe>
+
   <div class="container">
+    <header>
+      <img src="https://ecossis.com.br/wp-content/uploads/2023/09/logo_ecossis.png" alt="Logo Ecossis">
+    </header>
+
     <div class="form-container">
       <h2>Envio de Documento</h2>
       <p>Carregue seu arquivo para gerar o NFT.</p>
+      <form id="formEnvio"
+            action="https://upload-service-function-236688625650.southamerica-east1.run.app/upload"
+            method="POST"
+            enctype="multipart/form-data"
+            target="uploadFrame">
+        <label for="documento">Selecione o documento:</label><br><br>
+        <input type="file" id="documento" name="file" required><br><br>
+        <button type="submit">Enviar Documento</button>
+      </form>
       <div id="mensagem" class="mensagem"></div>
     </div>
-    <form id="formEnvio" action="https://upload-service-function-236688625650.southamerica-east1.run.app/upload" method="POST" enctype="multipart/form-data" target="uploadFrame">
-      <input type="hidden" name="name" value="documento">
-      <input type="hidden" name="action" value="upload">
-      <input type="hidden" name="description" value="Documento para geração de NFT">
-      <input type="hidden" name="type" value="application/pdf">
-      <input type="hidden" name="token" value="YOUR_TOKEN_HERE">
-      <input type="hidden" name="callback_url" value="https://ecossis.com.br/callback">
-<label for="documento">Selecione o documento:</label><br><br>
-<input type="file" id="documento" name="file" required><br><br>
-<button type="submit">Enviar Documento</button>
-</form>
 
     <div class="nft-button">
       <a href="nft-html.html">
@@ -99,20 +99,15 @@
     const frame = document.getElementsByName('uploadFrame')[0];
     const mensagemDiv = document.getElementById('mensagem');
 
-    frame.addEventListener('load', () => {
+    window.addEventListener('message', event => {
       try {
-        const doc = frame.contentDocument || frame.contentWindow.document;
-        const text = doc.body.innerText.trim();
-        const data = JSON.parse(text);
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         if (data.message) {
           mensagemDiv.textContent = data.message;
           mensagemDiv.style.color = 'green';
         } else if (data.error) {
           mensagemDiv.textContent = data.error;
           mensagemDiv.style.color = 'red';
-        } else {
-          mensagemDiv.textContent = 'Upload concluído.';
-          mensagemDiv.style.color = 'black';
         }
       } catch (e) {
         mensagemDiv.textContent = 'Resposta inválida do servidor.';
