@@ -2,7 +2,9 @@
   "name": "oikos-certify-ui",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ecossis-solucoes-ambientais.github.io/nft-oikos/",
+  "homepage": "https://ecossis-solucoes-ambientais.github.io/oikos-certify-ui",
+  "description": "Oikos Certify UI",
+  "main": "index.js",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
