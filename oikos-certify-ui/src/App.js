@@ -5,7 +5,7 @@ import Gallery from './pages/Gallery';
 
 function App() {
   return (
-    <BrowserRouter basename="/<seu-repo>">
+    <BrowserRouter basename="/nft-oikos">
       <Header />
       <Routes>
         <Route path="/" element={<Upload />} />
