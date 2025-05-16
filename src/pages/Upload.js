@@ -3,7 +3,7 @@ import { useState } from 'react';
 import HowItWorks         from '../components/HowItWorks';
 import RecentCertificates from '../components/RecentCertificates';  // ← IMPORT
 
-export default function Upload() {
+export default function Upload( { onUploadSuccess }) {
   const [file, setFile]     = useState(null);
   const [status, setStatus] = useState('');
 
