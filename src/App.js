@@ -1,23 +1,19 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
-import Header             from './components/Header'
-import Upload             from './pages/Upload'
-import Gallery            from './pages/Gallery'
-import CertificateDetail  from './pages/CertificatesDetail'  // ← importe aqui
+import { useState } from 'react'                
+import Header from './components/Header'
+import Upload from './pages/Upload'
+import Gallery from './pages/Gallery'
+import CertificateDetail from './pages/CertificatesDetail'
 
 export default function App() {
+  const [refresh, setRefresh] = useState(0)
   return (
     <Router>
       <Header/>
       <Routes>
-
-        const [refresh, setRefresh] = useState(0)
-        
-        <Route path="/"                 element={<Upload />}        element={<Upload onUploadSuccess={() => setRefresh(r => r + 1)} />} />
-        <Route path="/gallery"          element={<Gallery />}       element={<Gallery refresh={refresh} />} />
-        <Route
-          path="/certificates/:tokenId"  // ← defina a rota de detalhe
-          element={<CertificateDetail />}
-        />
+        <Route path="/"                 element={<Upload onUploadSuccess={() => setRefresh(r => r + 1)} />} />
+        <Route path="/gallery"          element={<Gallery refresh={refresh} />} />
+        <Route path="/certificates/:tokenID"     element={<CertificateDetail />} />
       </Routes>
     </Router>
   )
