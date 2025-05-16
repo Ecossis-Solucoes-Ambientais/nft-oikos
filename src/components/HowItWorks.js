@@ -1,4 +1,4 @@
-// src/components/HowItWorks.js
+
 import React from 'react';
 
 const steps = [
