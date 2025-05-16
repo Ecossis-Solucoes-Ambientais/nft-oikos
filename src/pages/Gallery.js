@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'           // ← importe o Link
 import CertificateCard from '../components/CertificateCard'
 
-export default function Gallery({refresh}) {
+export default function Gallery() {
   const [certs, setCerts] = useState([])
 
   const fetchData = () => {
@@ -23,7 +23,7 @@ export default function Gallery({refresh}) {
   // 2) Chame-a no useEffect, e também quando o “refresh” mudar
   useEffect(() => {
     fetchData()
-  }, [refresh])
+  }, [])
 
   return (
     <main className="max-w-5xl mx-auto p-8">
