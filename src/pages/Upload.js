@@ -37,9 +37,11 @@ export default function Upload() {
         </button>
       </form>
       {status && <p className="mt-4">{status}</p>}
-      <HowItWorks />
-      <p className="mt-4 text-sm text-gray-500">
-        Ao enviar, você concorda com nossos <a href="/terms" className="text-purple-600">Termos de Serviço</a>.
+    <HowItWorks />
+    <p className="mt-4 text-sm text-gray-500">
+     Ao enviar, você concorda com nossos <a href="/terms" className="text-purple-600">Termos de Serviço</a>.
+    </p>
+    <RecentCertificates />
     </main>
   )
 }
