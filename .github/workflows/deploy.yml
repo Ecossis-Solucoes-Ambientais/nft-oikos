@@ -1,5 +1,9 @@
 name: Deploy static site to GH Pages
 
+permissions:
+  contents: write
+  pages: write
+
 on:
   push:
     branches: [ main ]     # ou 'master', se for seu caso
