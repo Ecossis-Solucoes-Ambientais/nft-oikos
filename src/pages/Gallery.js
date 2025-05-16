@@ -6,15 +6,17 @@ export default function Gallery({refresh}) {
   const [certs, setCerts] = useState([])
 
   const fetchData = () => {
-    fetch(`https://gcp-list-certificates-service-236688625650.southamerica-east1.run.app/?t=${Date.now()}`)
+    fetch(`https://gcp-list-certificates-service-236688625650.southamerica-east1.run.app/?t=${Date.now()}`, {cache: 'no-store'})
       .then(r => r.json())
       .then(data => {
-        const mapped = data.map(item => ({
-          tokenId:  item.ipfs_hash,
-          imageUrl: item.pinata_url,
-          title:    item.file_name,
-          date:     new Date(item.timestamp).toLocaleDateString('pt-BR')
-        }))
+        const mapped = data
+          .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))
+          .map(item => ({
+            tokenId:  item.ipfs_hash,
+            imageUrl: item.pinata_url,
+            title:    item.file_name,
+            date:     new Date(item.timestamp).toLocaleDateString('pt-BR'),
+          }))
         setCerts(mapped)
       })
       .catch(console.error)
