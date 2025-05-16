@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Header            from './components/Header'
 import Upload            from './pages/Upload'
 import Gallery           from './pages/Gallery'
-import CertificateDetail from './pages/CertificateDetail'
+import CertificateDetail from './pages/CertificatesDetail'
 
 export default function App() {
   const [refresh, setRefresh] = useState(0)
