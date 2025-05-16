@@ -1,9 +1,9 @@
 // src/pages/Upload.js
 import { useState } from 'react';
 import HowItWorks         from '../components/HowItWorks';
-import RecentCertificates from '../components/RecentCertificates';  // ← IMPORT
+import RecentCertificates from '../components/RecentCertificates';
 
-export default function Upload( { onUploadSuccess }) {
+export default function Upload() {
   const [file, setFile]     = useState(null);
   const [status, setStatus] = useState('');
 
@@ -12,8 +12,7 @@ export default function Upload( { onUploadSuccess }) {
     if (!file) return;
     setStatus('Enviando...');
     const form = new FormData();
-    form.append('file', file)
-
+    form.append('file', file);
     try {
       const res = await fetch(
         'https://proxy-service-236688625650.southamerica-east1.run.app/',
@@ -21,12 +20,10 @@ export default function Upload( { onUploadSuccess }) {
       );
       if (!res.ok) throw new Error(await res.text());
       setStatus('✔ Certificado criado!');
-      onUploadSuccess();
     } catch (err) {
       console.error(err);
       setStatus('❌ Falha no envio');
     }
-    
   }
 
   return (
@@ -51,7 +48,7 @@ export default function Upload( { onUploadSuccess }) {
 
       <HowItWorks />
 
-      <RecentCertificates />
+      <RecentCertificates /> {/* e aqui, após importar */}
     </main>
   )
 }
