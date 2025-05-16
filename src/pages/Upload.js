@@ -48,7 +48,7 @@ export default function Upload() {
 
       <HowItWorks />
 
-      <RecentCertificates /> {/* e aqui, após importar */}
+      <RecentCertificates />
     </main>
   )
 }
