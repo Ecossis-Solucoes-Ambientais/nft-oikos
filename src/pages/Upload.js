@@ -24,6 +24,7 @@ export default function Upload() {
       console.error(err);
       setStatus('❌ Falha no envio');
     }
+    setRefresh(r => r + 1)
   }
 
   return (

@@ -4,6 +4,8 @@ import Upload             from './pages/Upload'
 import Gallery            from './pages/Gallery'
 import CertificateDetail  from './pages/CertificatesDetail'  // ← importe aqui
 
+const [refresh, setRefresh] = useState(0)
+
 export default function App() {
   return (
     <Router>
