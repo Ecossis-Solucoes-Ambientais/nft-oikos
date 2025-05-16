@@ -6,7 +6,7 @@ export default function Gallery() {
   const [certs, setCerts] = useState([])
 
   const fetchData = () => {
-    fetch(`https://YOUR_PROXY_URL/?t=${Date.now()}`)
+    fetch(`https://gcp-list-certificates-service-236688625650.southamerica-east1.run.app/?t=${Date.now()}`)
       .then(r => r.json())
       .then(data => {
         const mapped = data.map(item => ({
@@ -29,9 +29,9 @@ export default function Gallery() {
     <main className="max-w-5xl mx-auto p-8">
       <h1 className="text-2xl font-bold mb-6">Galeria de Certificados</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {certs.map(c => (
-          /* ... seu CertificateCard ... */
-        ))}
+      {certs.map(c => {
+        return <CertificateCard key={c.tokenId} cert={c} />;
+    })}
       </div>
     </main>
   )
@@ -69,4 +69,4 @@ export default function Gallery() {
       </div>
     </main>
   )
-}
+
