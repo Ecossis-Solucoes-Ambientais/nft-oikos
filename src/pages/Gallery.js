@@ -6,7 +6,7 @@ export default function Gallery({refresh}) {
   const [certs, setCerts] = useState([])
 
   const fetchData = () => {
-    fetch(`https://gcp-list-certificates-service-236688625650.southamerica-east1.run.app/?t=${Date.now()}`)
+    fetch(`https://gcp-list-certificates-service-236688625650.southamerica-east1.run.app`)
       .then(r => r.json())
       .then(data => {
         const mapped = data
