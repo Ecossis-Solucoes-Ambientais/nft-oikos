@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'           // ← importe o Link
 import CertificateCard from '../components/CertificateCard'
 
-export default function Gallery(`{refresh}`) {
+export default function Gallery({refresh}) {
   const [certs, setCerts] = useState([])
 
   const fetchData = () => {
