@@ -20,11 +20,12 @@ export default function Upload() {
       );
       if (!res.ok) throw new Error(await res.text());
       setStatus('✔ Certificado criado!');
+      onUploadSuccess();
     } catch (err) {
       console.error(err);
       setStatus('❌ Falha no envio');
     }
-    setRefresh(r => r + 1)
+    
   }
 
   return (
