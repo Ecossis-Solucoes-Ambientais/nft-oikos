@@ -6,7 +6,7 @@ export default function Gallery() {
   const [certs, setCerts] = useState([]);
 
   useEffect(() => {
-    fetch('https://gcp-list-certificates-service-236688625650.southamerica-east1.run.app/certificates')
+    fetch('https://gallery-proxy-service-236688625650.southamerica-east1.run.app')
       .then(r => {
         if (!r.ok) throw new Error('Network response was not ok');
         return r;
