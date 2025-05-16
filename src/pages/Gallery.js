@@ -5,6 +5,38 @@ import CertificateCard from '../components/CertificateCard'
 export default function Gallery() {
   const [certs, setCerts] = useState([])
 
+  const fetchData = () => {
+    fetch(`https://YOUR_PROXY_URL/?t=${Date.now()}`)
+      .then(r => r.json())
+      .then(data => {
+        const mapped = data.map(item => ({
+          tokenId:  item.ipfs_hash,
+          imageUrl: item.pinata_url,
+          title:    item.file_name,
+          date:     new Date(item.timestamp).toLocaleDateString('pt-BR')
+        }))
+        setCerts(mapped)
+      })
+      .catch(console.error)
+  }
+
+  // 2) Chame-a no useEffect, e também quando o “refresh” mudar
+  useEffect(() => {
+    fetchData()
+  }, [refresh])
+
+  return (
+    <main className="max-w-5xl mx-auto p-8">
+      <h1 className="text-2xl font-bold mb-6">Galeria de Certificados</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {certs.map(c => (
+          /* ... seu CertificateCard ... */
+        ))}
+      </div>
+    </main>
+  )
+}
+
   useEffect(() => {
     fetch('https://gallery-proxy-service-236688625650.southamerica-east1.run.app/?t=${Date.now()}')
       .then(r => r.json())

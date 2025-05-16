@@ -11,8 +11,8 @@ export default function App() {
     <Router>
       <Header/>
       <Routes>
-        <Route path="/"                 element={<Upload />} />
-        <Route path="/gallery"          element={<Gallery />} />
+        <Route path="/"                 element={<Upload />}        element={<Upload onUploadSuccess={() => setRefresh(r => r + 1)} />} />
+        <Route path="/gallery"          element={<Gallery />}       element={<Gallery refresh={refresh} />} />
         <Route
           path="/certificates/:tokenId"  // ← defina a rota de detalhe
           element={<CertificateDetail />}
