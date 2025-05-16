@@ -11,11 +11,10 @@ export default function Gallery() {
       .then(data => {
         // mapear os campos retornados para a shape que o CertificateCard espera
         const mapped = data.map(item => ({
-          tokenId:    item.ipfs_hash,
-          imageUrl:   item.pinata_url,       // ou monta a URL do IPFS
-          title:      item.file_name,
-          description:item.transaction_url,   // ou outro campo
-          date:       item.timestamp
+          tokenId:  item.ipfs_hash,
+          imageUrl: item.pinata_url,
+          title:    item.file_name,
+          date:     new Date(item.timestamp).toLocaleDateString('pt-BR')
         }))
         setCerts(mapped)
       })
