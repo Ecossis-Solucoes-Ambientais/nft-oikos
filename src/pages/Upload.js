@@ -12,7 +12,8 @@ export default function Upload() {
     if (!file) return;
     setStatus('Enviando...');
     const form = new FormData();
-    form.append('file', file);
+    form.append('file', file)
+
     try {
       const res = await fetch(
         'https://proxy-service-236688625650.southamerica-east1.run.app/',
