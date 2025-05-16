@@ -5,7 +5,7 @@ export default function RecentCertificates() {
   const [certs, setCerts] = useState([])
 
   useEffect(() => {
-    fetch('https://YOUR_PROXY_URL/')   // a rota do seu proxy_list
+    fetch('https://gcp-list-certificates-service-236688625650.southamerica-east1.run.app')   // a rota do seu proxy_list
       .then(r => r.json())
       .then(data => {
         const mapped = data
