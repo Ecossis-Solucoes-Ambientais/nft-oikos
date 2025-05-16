@@ -11,7 +11,7 @@ export default function Upload() {
     const form = new FormData();
     form.append('file', file);
     try {
-      const res = await fetch('https://gcstorage-upload-service-236688625650.southamerica-east1.run.app', {
+      const res = await fetch('https://proxy-service-236688625650.southamerica-east1.run.app', {
         method: 'POST',
         body: form
       });
