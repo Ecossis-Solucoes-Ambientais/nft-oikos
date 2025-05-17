@@ -56,7 +56,7 @@ export default function CertificateDetail() {
         <img
           src={cert.imageUrl}
           alt={cert.title}
-          className="w-full max-w-2xl h-auto rounded-lg shadow-md"
+          className="w-full max-w-3xl h-auto rounded-lg shadow-md"
         />
       </div>
       <div className="space-y-4 text-lg">
