@@ -1,29 +1,25 @@
-import { useLocation, Navigate } from 'react-router-dom'
+import { useLocation, useParams, Navigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import CertificateCard from '../components/CertificateCard'
 
 export default function CertificateDetail() {
-  const location = useLocation()
-  // State passed via Link
-  const passedCert = location.state?.cert
+  const { cert: passedCert } = useLocation().state || {}   // pega do Link
+  const { tokenId }         = useParams()                  // via URL /:tokenId
 
-  const [cert, setCert] = useState(passedCert || null)
+  const [cert, setCert]     = useState(passedCert || null)
   const [loading, setLoading] = useState(!passedCert)
-  const [error, setError] = useState(null)
-
-  // Se não houve passado, fazemos fetch pelo tokenId
-  const { tokenId } = location.pathname.match(/\/(?:certificates\/)?)?(?<tokenId>[^/]+)/)?.groups || {}
+  const [error, setError]     = useState(null)
 
   useEffect(() => {
-    if (passedCert) return
+    if (passedCert) return   // já temos os dados, não precisamos buscar
     setLoading(true)
-    fetch(`https://gallery-proxy-service-236688625650.southamerica-east1.run.app/?id=${tokenId}`)
+    fetch(`https://YOUR_PROXY_URL/?id=${tokenId}`)
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.json()
       })
       .then(data => {
-        // assume data é um array ou objeto
+        // seu serviço pode retornar um array ou um objeto
         const c = Array.isArray(data) ? data[0] : data
         setCert({
           tokenId:       c.ipfs_hash,
@@ -39,10 +35,9 @@ export default function CertificateDetail() {
       .finally(() => setLoading(false))
   }, [passedCert, tokenId])
 
-  // Se não veio certificado e não está carregando
   if (!cert && !loading) return <Navigate to="/gallery" replace />
 
-  if (loading) return <p className="text-center p-8">Carregando detalhe do certificado…</p>
+  if (loading) return <p className="text-center p-8">Carregando detalhe…</p>
   if (error)   return <p className="text-center p-8 text-red-500">Erro: {error}</p>
 
   return (
@@ -55,23 +50,15 @@ export default function CertificateDetail() {
       />
       <div className="space-y-2">
         <p><strong>Data:</strong> {cert.date}</p>
-        <p>
-          <strong>Token ID:</strong> {cert.tokenId}
-        </p>
+        <p><strong>Token ID:</strong> {cert.tokenId}</p>
         <p>
           <strong>Transaction:</strong>{' '}
-          {cert.transaction ? (
-            <a
-              href={cert.transactionUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-purple-600 hover:underline"
-            >
-              {cert.transaction}
-            </a>
-          ) : (
-            'N/A'
-          )}
+          {cert.transaction
+            ? <a href={cert.transactionUrl} target="_blank" rel="noreferrer"
+                 className="text-purple-600 hover:underline">
+                {cert.transaction}
+              </a>
+            : 'N/A'}
         </p>
       </div>
     </main>
