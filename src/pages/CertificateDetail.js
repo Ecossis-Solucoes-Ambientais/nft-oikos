@@ -1,25 +1,20 @@
-import { useLocation, useParams, Navigate } from 'react-router-dom'
+// src/pages/CertificateDetail.js
+
+import { useParams, Navigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import CertificateCard from '../components/CertificateCard'
 
 export default function CertificateDetail() {
-  const { cert: passedCert } = useLocation().state || {}   // pega do Link
-  const { tokenId }         = useParams()                  // via URL /:tokenId
-
-  const [cert, setCert]     = useState(passedCert || null)
-  const [loading, setLoading] = useState(!passedCert)
+  const { tokenId } = useParams()
+  const [cert, setCert]     = useState(null)
+  const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
 
   useEffect(() => {
-    if (passedCert) return   // já temos os dados, não precisamos buscar
-    setLoading(true)
-    fetch(`https://gallery-proxy-service-236688625650.southamerica-east1.run.app/?id=${tokenId}`)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`)
-        return r.json()
-      })
-      .then(data => {
-        // seu serviço pode retornar um array ou um objeto
+    async function fetchCert() {
+      try {
+        const res = await fetch(`https://gallery-proxy-service-236688625650.southamerica-east1.run.app/?id=${tokenId}`)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const data = await res.json()
         const c = Array.isArray(data) ? data[0] : data
         setCert({
           tokenId:       c.ipfs_hash,
@@ -28,38 +23,50 @@ export default function CertificateDetail() {
           description:   c.description || c.file_name,
           date:          new Date(c.timestamp).toLocaleString('pt-BR'),
           transaction:   c.transaction_hash,
-          transactionUrl:c.transaction_url
+          transactionUrl:c.transaction_url,
         })
-      })
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false))
-  }, [passedCert, tokenId])
-
-  if (!cert && !loading) return <Navigate to="/gallery" replace />
+      } catch (e) {
+        setError(e.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCert()
+  }, [tokenId])
 
   if (loading) return <p className="text-center p-8">Carregando detalhe…</p>
   if (error)   return <p className="text-center p-8 text-red-500">Erro: {error}</p>
+  if (!cert)   return <Navigate to="/gallery" replace />
 
   return (
-    <main className="max-w-xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-4">{cert.title}</h1>
-      <img
-        src={cert.imageUrl}
-        alt={cert.title}
-        className="w-full h-auto mb-6 rounded-lg shadow"
-      />
-      <div className="space-y-2">
+    <main className="max-w-3xl mx-auto p-8">
+      <h1 className="text-4xl font-bold mb-6">{cert.title}</h1>
+      <div className="flex justify-center mb-6">
+        <img
+          src={cert.imageUrl}
+          alt={cert.title}
+          className="w-full max-w-2xl h-auto rounded-lg shadow-md"
+        />
+      </div>
+      <div className="space-y-4 text-lg">
         <p><strong>Data:</strong> {cert.date}</p>
         <p><strong>Token ID:</strong> {cert.tokenId}</p>
         <p>
-          <strong>Transaction:</strong>{' '}
-          {cert.transaction
-            ? <a href={cert.transactionUrl} target="_blank" rel="noreferrer"
-                 className="text-purple-600 hover:underline">
-                {cert.transaction}
-              </a>
-            : 'N/A'}
+          <strong>Transação:</strong>{' '}
+          {cert.transaction ? (
+            <a
+              href={cert.transactionUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary hover:underline"
+            >
+              {cert.transaction}
+            </a>
+          ) : (
+            <span className="text-gray-500">Não disponível</span>
+          )}
         </p>
+        <p><strong>Descrição:</strong> {cert.description}</p>
       </div>
     </main>
   )
