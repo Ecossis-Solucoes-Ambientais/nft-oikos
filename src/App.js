@@ -4,7 +4,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import Header  from './components/Header'
 import Upload  from './pages/Upload'
 import Gallery from './pages/Gallery'
-import CertificatesDetail from './pages/CertificateDetail'
+import CertificateDetail from './pages/CertificateDetail'
 
 export default function App() {
   return (
