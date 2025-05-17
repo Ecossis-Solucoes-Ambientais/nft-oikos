@@ -12,6 +12,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Upload />} />
         <Route path="/gallery" element={<Gallery />} />
+        <Route path="/certificates/:tokenId" element={<CertificateDetail />} />
       </Routes>
     </Router>
   )
