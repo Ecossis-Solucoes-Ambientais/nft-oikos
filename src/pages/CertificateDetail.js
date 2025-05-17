@@ -13,7 +13,7 @@ export default function CertificateDetail() {
   useEffect(() => {
     if (passedCert) return   // já temos os dados, não precisamos buscar
     setLoading(true)
-    fetch(`https://YOUR_PROXY_URL/?id=${tokenId}`)
+    fetch(`https://gallery-proxy-service-236688625650.southamerica-east1.run.app/?id=${tokenId}`)
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.json()
