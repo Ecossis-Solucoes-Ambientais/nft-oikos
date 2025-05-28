@@ -77,7 +77,7 @@ export default function CertificateDetail() {
               href={txUrl}
               target="_blank"
               rel="noreferrer"
-              className="[text-#bbd259] hover:underline"
+              className="text-#bbd259 hover:underline"
             >
               {txDisplay}
             </a>
