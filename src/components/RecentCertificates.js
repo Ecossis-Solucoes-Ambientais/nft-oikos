@@ -48,7 +48,7 @@ export default function RecentCertificates() {
                 {cert.description}
               </p>
               <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
-                <span className="px-2 py-1 border rounded-full border-primary-light text-primary">
+                <span className="px-2 py-1 border rounded-full border-primary-light text-[#bbd259]">
                   NFT #{cert.tokenId}
                 </span>
                 <span>{cert.date}</span>
