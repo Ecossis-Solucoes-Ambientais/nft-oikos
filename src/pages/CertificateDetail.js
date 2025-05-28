@@ -8,9 +8,9 @@ export default function CertificateDetail() {
   const location = useLocation()
   const passedCert = location.state?.cert
 
-  const [cert, setCert] = useState(passedCert || null)
+  const [cert, setCert]       = useState(passedCert || null)
   const [loading, setLoading] = useState(!passedCert)
-  const [error, setError] = useState(null)
+  const [error, setError]     = useState(null)
 
   useEffect(() => {
     if (passedCert) return
@@ -21,7 +21,6 @@ export default function CertificateDetail() {
         return res.json()
       })
       .then(data => {
-        // filtra pelo tokenId
         const found = Array.isArray(data)
           ? data.find(item => item.ipfs_hash === tokenId)
           : data.ipfs_hash === tokenId
@@ -49,6 +48,11 @@ export default function CertificateDetail() {
   if (error)   return <p className="text-center p-8 text-red-500">{error}</p>
   if (!cert)   return <p className="text-center p-8">Certificado não disponível</p>
 
+  // Prefixa o valor da transação com "0x" se necessário
+  const txDisplay = cert.transaction
+    ? (cert.transaction.startsWith('0x') ? cert.transaction : `0x${cert.transaction}`)
+    : null
+
   return (
     <main className="max-w-3xl mx-auto p-8">
       <h1 className="text-4xl font-bold mb-6">{cert.title}</h1>
@@ -56,7 +60,7 @@ export default function CertificateDetail() {
         <img
           src={cert.imageUrl}
           alt={cert.title}
-          className="w-full max-w-5xl h-auto rounded-lg shadow-md"
+          className="w-full max-w-2xl h-auto rounded-lg shadow-md"
         />
       </div>
       <div className="space-y-4 text-lg">
@@ -64,14 +68,14 @@ export default function CertificateDetail() {
         <p><strong>Token ID:</strong> {cert.tokenId}</p>
         <p>
           <strong>Transação:</strong>{' '}
-          {cert.transaction ? (
+          {txDisplay ? (
             <a
-              href={'0x'cert.transactionUrl}
+              href={cert.transactionUrl}
               target="_blank"
               rel="noreferrer"
-              className="text-primary hover:underline"
+              className="text-green-500 hover:underline"
             >
-              {cert.transaction}
+              {txDisplay}
             </a>
           ) : (
             <span className="text-gray-500">Não disponível</span>
