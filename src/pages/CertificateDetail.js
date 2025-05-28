@@ -74,7 +74,7 @@ export default function CertificateDetail() {
           <strong>Transação:</strong>{' '}
           {txDisplay ? (
             <a
-              href={`https://sepolia.etherscan.io/tx/0x${txDisplay}`}
+              href={txUrl}
               target="_blank"
               rel="noreferrer"
               className="[text-#bbd259] hover:underline"
