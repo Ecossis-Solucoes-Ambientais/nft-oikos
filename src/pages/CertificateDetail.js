@@ -66,7 +66,7 @@ export default function CertificateDetail() {
           <strong>Transação:</strong>{' '}
           {cert.transaction ? (
             <a
-              href={cert.transactionUrl}
+              href={'0x'cert.transactionUrl}
               target="_blank"
               rel="noreferrer"
               className="text-primary hover:underline"
