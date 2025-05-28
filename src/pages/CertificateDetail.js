@@ -54,7 +54,7 @@ export default function CertificateDetail() {
     : null
   // Reconstrói a URL de transação incluindo o prefixo 0x
   const txUrl = txDisplay
-    ? `https://sepolia.etherscan.io/tx/${txDisplay}`
+    ? `https://sepolia.etherscan.io/tx/0x${txDisplay}`
     : null
 
   return (
