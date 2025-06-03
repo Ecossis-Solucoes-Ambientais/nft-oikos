@@ -29,7 +29,7 @@ export default function HowItWorks() {
             key={number}
             className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-start"
           >
-            <div className="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center mb-4">
+            <div style={{backgroundColor: "#bbd259"}} className="w-10 h-10 text-white rounded-full flex items-center justify-center mb-4">
               <span className="font-bold">{number}</span>
             </div>
             <h3 className="text-xl font-semibold mb-2">{title}</h3>
