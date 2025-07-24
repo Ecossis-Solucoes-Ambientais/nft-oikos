@@ -5,17 +5,19 @@ export default function RecentCertificates() {
   // Chama o hook de polling a cada 2 minutos
   const rawData = usePollingFetch('https://gallery-proxy-service-236688625650.southamerica-east1.run.app', 2 * 60 * 1000)
 
+  const list = Array.isArray(rawData) ? rawData : []
+
   // Mapeia e pega os 3 mais recentes
-  const certs = rawData
-    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-    .slice(0, 3)
-    .map(item => ({
-      tokenId:     item.ipfs_hash,
-      imageUrl:    item.pinata_url,
-      title:       item.file_name,
-      description: item.description || item.file_name,
-      date:        new Date(item.timestamp).toLocaleDateString('pt-BR'),
-    }))
+  const certs = list
+   .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+   .slice(0, 3)
+   .map(item => ({
+     tokenId:     item.ipfs_hash,
+     imageUrl:    item.pinata_url,
+     title:       item.file_name,
+     description: item.description || item.file_name,
+     date:        new Date(item.timestamp).toLocaleDateString('pt-BR'),
+   }))
 
   if (certs.length === 0) {
     return <p className="text-center py-8">Nenhum certificado recente.</p>
