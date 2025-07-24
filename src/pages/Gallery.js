@@ -6,10 +6,13 @@ import CertificateCard from '../components/CertificateCard'
 export default function Gallery() {
   
   const rawData = usePollingFetch('https://gallery-proxy-service-236688625650.southamerica-east1.run.app', 2 * 60 * 1000)
+  console.log('Gallery rawData:', rawData)
 
   // ② mapeia para a shape que o CertificateCard espera
+  const list = Array.isArray(rawData) ? rawData : []
+
   const certs = useMemo(() => {
-    return rawData
+    return list
       .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
       .map(item => ({
         tokenId:  item.ipfs_hash,
@@ -17,7 +20,7 @@ export default function Gallery() {
         title:    item.file_name,
         date:     new Date(item.timestamp).toLocaleDateString('pt-BR'),
       }))
-  }, [rawData])
+  }, [list])
 
   return (
     <main className="max-w-5xl mx-auto p-8">
