@@ -5,7 +5,11 @@ export default function RecentCertificates() {
   // Chama o hook de polling a cada 2 minutos
   const rawData = usePollingFetch('https://gallery-proxy-service-236688625650.southamerica-east1.run.app', 2 * 60 * 1000)
 
-  const list = Array.isArray(rawData) ? rawData : []
+  const list = Array.isArray(rawData)
+  ? rawData
+  : Array.isArray(rawData.certificates)
+    ? rawData.certificates
+    : []
 
   // Mapeia e pega os 3 mais recentes
   const certs = list

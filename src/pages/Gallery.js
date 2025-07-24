@@ -9,7 +9,11 @@ export default function Gallery() {
   console.log('Gallery rawData:', rawData)
 
   // ② mapeia para a shape que o CertificateCard espera
-  const list = Array.isArray(rawData) ? rawData : []
+  const list = Array.isArray(rawData)
+  ? rawData
+  : Array.isArray(rawData.certificates)
+    ? rawData.certificates
+    : []
 
   const certs = useMemo(() => {
     return list
