@@ -39,7 +39,7 @@ export default function RecentCertificates() {
         {certs.map(cert => (
           <Link
             key={cert.tokenId}
-            to={`/certificates/${cert.tokenId}`}
+            to={`/certificate/${cert.tokenId}`}
             state={{ cert }}
             className="block border rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition"
           >
