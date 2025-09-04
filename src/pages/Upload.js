@@ -35,14 +35,14 @@ export default function Upload() {
         <input
           type="file"
           onChange={e => setFile(e.target.files[0])}
-          className="block w-full border border-gray-300 rounded p-2"
+          className="block w-auto border border-gray-300 rounded p-2"
         />
         <button
           style={{backgroundColor: "#bbd259"}}
           onMouseEnter={(e) => {e.target.style.backgroundColor = "#a3b84d"}}
           onMouseLeave={(e) => {e.target.style.backgroundColor = "#bbd259"}}
           type="submit"
-          className="w-full py-2 text-white rounded hover:bg-primary-dark transition"
+          className="w-auto py-2 text-white rounded hover:bg-primary-dark transition"
         >
           Enviar
         </button>
