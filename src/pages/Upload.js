@@ -42,7 +42,7 @@ export default function Upload() {
           onMouseEnter={(e) => {e.target.style.backgroundColor = "#a3b84d"}}
           onMouseLeave={(e) => {e.target.style.backgroundColor = "#bbd259"}}
           type="submit"
-          className="w-auto py-2 text-white rounded hover:bg-primary-dark transition"
+          className="min-w-[200px] py-2 text-white rounded hover:bg-primary-dark transition"
         >
           Enviar
         </button>
