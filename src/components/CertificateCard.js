@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 export default function CertificateCard({ cert }) {
   return (
     <Link
-      to={`/certificate/${encodeURIComponent(cert.tokenId)}`}
+      to={`/certificates/${encodeURIComponent(cert.tokenId)}`}
       state={{ cert }}
       className="block border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-150"
     >
