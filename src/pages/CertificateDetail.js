@@ -8,53 +8,85 @@ export default function CertificateDetail() {
   const location = useLocation()
   const passedCert = location.state?.cert
 
-  const [cert, setCert]       = useState(passedCert || null)
-  const [loading, setLoading] = useState(!passedCert)
+  const [cert, setCert]       = useState(null)
+  const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
 
+  const normalize = (raw) => ({
+    tokenId:        raw.ipfs_hash || raw.cid || raw.tokenId || tokenId,
+    imageUrl:       raw.pinata_url || raw.image || raw.image_url,
+    title:          raw.file_name || raw.title || 'Certificado',
+    description:    raw.description || raw.file_name || '',
+    date:           raw.timestamp ? new Date(raw.timestamp).toLocaleString('pt-BR') : '',
+    transaction:    raw.transaction_hash || raw.txHash || raw.tx_hash || null,
+    transactionUrl: raw.transaction_url || null,
+    network:        raw.network || raw.chain || 'sepolia',
+  })
+
   useEffect(() => {
-    if (passedCert) return
-    setLoading(true)
-    fetch(`https://gallery-proxy-service-236688625650.southamerica-east1.run.app/?t=${Date.now()}`, { cache: 'no-store' })
-      .then(res => {
+    let cancelled = false
+
+    const run = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const res = await fetch(
+          `https://gallery-proxy-service-236688625650.southamerica-east1.run.app/?t=${Date.now()}`,
+          { cache: 'no-store' }
+        )
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json()
-      })
-      .then(data => {
-        const found = Array.isArray(data)
-          ? data.find(item => item.ipfs_hash === tokenId)
-          : data.ipfs_hash === tokenId
-            ? data
-            : null
-        if (!found) {
-          setError('Certificado não encontrado')
-        } else {
-          setCert({
-            tokenId:        found.ipfs_hash,
-            imageUrl:       found.pinata_url,
-            title:          found.file_name,
-            description:    found.description || found.file_name,
-            date:           new Date(found.timestamp).toLocaleString('pt-BR'),
-            transaction:    found.transaction_hash,
-            transactionUrl: found.transaction_url
-          })
+
+        const data = await res.json()
+
+        const arr = Array.isArray(data)
+          ? data
+          : (Array.isArray(data?.certificates) ? data.certificates : null)
+
+        let found = null
+        if (arr) {
+          found = arr.find(item => String(item.ipfs_hash) === String(tokenId))
+        } else if (data && data.ipfs_hash && String(data.ipfs_hash) === String(tokenId)) {
+          found = data
         }
-      })
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false))
-  }, [passedCert, tokenId])
+
+        if (!found) {
+          if (passedCert) {
+            setCert(normalize(passedCert))
+          } else {
+            throw new Error('Certificado não encontrado')
+          }
+        } else {
+          setCert(normalize(found))
+        }
+      } catch (e) {
+        setError(e.message)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    // Sempre buscar do backend para enriquecer (mesmo com passedCert)
+    run()
+    return () => { cancelled = true }
+  }, [tokenId, location.key]) // força refetch em navegações iguais
 
   if (loading) return <p className="text-center p-8">Carregando detalhe…</p>
   if (error)   return <p className="text-center p-8 text-red-500">{error}</p>
   if (!cert)   return <p className="text-center p-8">Certificado não disponível</p>
 
-  // Prefixa o valor da transação com "0x" se necessário
   const txDisplay = cert.transaction
-    ? (cert.transaction.startsWith('0x') ? cert.transaction : `0x${cert.transaction}`)
+    ? (String(cert.transaction).startsWith('0x') ? cert.transaction : `0x${cert.transaction}`)
     : null
-  // Reconstrói a URL de transação incluindo o prefixo 0x
+
+  const explorerBase = {
+    sepolia: 'https://sepolia.etherscan.io/tx/',
+    mainnet: 'https://etherscan.io/tx/',
+    polygon: 'https://polygonscan.com/tx/',
+  }
+
   const txUrl = txDisplay
-    ? `https://sepolia.etherscan.io/tx/${txDisplay}`
+    ? (cert.transactionUrl || (explorerBase[cert.network] ? `${explorerBase[cert.network]}${txDisplay}` : null))
     : null
 
   return (
@@ -73,14 +105,18 @@ export default function CertificateDetail() {
         <p>
           <strong>Transação:</strong>{' '}
           {txDisplay ? (
-            <a
-              href={txUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-[#bbd259] hover:underline"
-            >
-              {txDisplay}
-            </a>
+            txUrl ? (
+              <a
+                href={txUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[#bbd259] hover:underline break-all"
+              >
+                {txDisplay}
+              </a>
+            ) : (
+              <span className="break-all">{txDisplay} <em>(sem explorer)</em></span>
+            )
           ) : (
             <span className="text-gray-500">Não disponível</span>
           )}
@@ -90,4 +126,3 @@ export default function CertificateDetail() {
     </main>
   )
 }
-
