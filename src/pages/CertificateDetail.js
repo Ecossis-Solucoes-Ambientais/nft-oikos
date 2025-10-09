@@ -15,7 +15,7 @@ export default function CertificateDetail() {
   // Converte o payload do backend para a shape usada no front
   const normalize = (raw) => ({
     tokenId:        raw.ipfs_hash || raw.cid || raw.tokenId || tokenId,
-    imageUrl:       raw.pinata_url || raw.image || raw.image_url,
+    imageUrl:       raw.pinata_url.replace('ipfs://', 'https://gateway.pinata/cloud/ipfs/') || raw.image || raw.image_url,
     title:          raw.file_name || raw.title || 'Certificado',
     description:    raw.description || raw.file_name || '',
     date:           raw.timestamp ? new Date(raw.timestamp).toLocaleString('pt-BR') : '',
