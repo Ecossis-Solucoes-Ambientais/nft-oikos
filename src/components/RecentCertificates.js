@@ -17,7 +17,7 @@ export default function RecentCertificates() {
    .slice(0, 3)
    .map(item => ({
      tokenId:     item.ipfs_hash,
-     imageUrl:    item.pinata_url,
+     imageUrl:    item.pinata_url.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/'),
      title:       item.file_name,
      description: item.description || item.file_name,
      date:        new Date(item.timestamp).toLocaleDateString('pt-BR'),
