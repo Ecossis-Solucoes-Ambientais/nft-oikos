@@ -20,7 +20,7 @@ export default function Gallery() {
       .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
       .map(item => ({
         tokenId:  item.ipfs_hash,
-        imageUrl: item.pinata_url.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/'),
+        imageUrl: item.pinata_url.replace('ipfs://', 'https://indigo-past-lamprey-584.mypinata.cloud/ipfs'),
         title:    item.file_name,
         date:     new Date(item.timestamp).toLocaleDateString('pt-BR'),
       }))
