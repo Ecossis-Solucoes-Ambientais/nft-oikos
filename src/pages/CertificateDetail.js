@@ -89,9 +89,9 @@ export default function CertificateDetail() {
 
   // URLs dos explorers por rede
   const explorerBase = {
-    sepolia: 'https://sepolia.etherscan.io/tx/',
-    mainnet: 'https://etherscan.io/tx/',
-    polygon: 'https://polygonscan.com/tx/',
+    // sepolia: 'https://sepolia.etherscan.io/tx/',
+    // mainnet: 'https://etherscan.io/tx/',
+    // polygon: 'https://polygonscan.com/tx/',
     besu: 'https://besu-transaction-viewer-ktrbmj2jvq-rj.a.run.app/tx/',
   }
 
