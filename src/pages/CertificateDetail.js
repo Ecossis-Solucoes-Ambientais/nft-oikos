@@ -15,13 +15,17 @@ export default function CertificateDetail() {
   // Converte o payload do backend para a shape usada no front
   const normalize = (raw) => ({
     tokenId:        raw.ipfs_hash || raw.cid || raw.tokenId || tokenId,
-    imageUrl:       raw.pinata_url.replace('ipfs://', 'https://gateway.pinata/cloud/ipfs/') || raw.image || raw.image_url,
+    imageUrl:       raw.pinata_url?.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/') || raw.image || raw.image_url,
     title:          raw.file_name || raw.title || 'Certificado',
     description:    raw.description || raw.file_name || '',
     date:           raw.timestamp ? new Date(raw.timestamp).toLocaleString('pt-BR') : '',
     transaction:    raw.transaction_hash || raw.txHash || raw.tx_hash || null,
-    transactionUrl: raw.transaction_url || null,
-    network:        raw.network || raw.chain || 'sepolia',
+    // NOVO: usar transaction_viewer_url do Firestore se disponível
+    transactionUrl: raw.certificate?.transaction_viewer_url || 
+                    raw.transaction_viewer_url || 
+                    raw.transaction_url || 
+                    null,
+    network:        raw.network || raw.chain || 'besu', // Agora padrão é 'besu'
   })
 
   useEffect(() => {
@@ -83,14 +87,17 @@ export default function CertificateDetail() {
     ? (String(cert.transaction).startsWith('0x') ? cert.transaction : `0x${cert.transaction}`)
     : null
 
+  // URLs dos explorers por rede
   const explorerBase = {
-    // sepolia: 'https://sepolia.etherscan.io/tx/',
-    // mainnet: 'https://etherscan.io/tx/',
-    // polygon: 'https://polygonscan.com/tx/',
-    besu: 'https://besu-transaction-viewer-ktrbmj2jvq-rj.a.run.app/tx/'
-    // besu (privado) não tem explorer público
+    sepolia: 'https://sepolia.etherscan.io/tx/',
+    mainnet: 'https://etherscan.io/tx/',
+    polygon: 'https://polygonscan.com/tx/',
+    besu: 'https://besu-transaction-viewer-ktrbmj2jvq-rj.a.run.app/tx/',
   }
 
+  // Prioridade:
+  // 1. transactionUrl do backend (já formatada pelo gerador de certificados)
+  // 2. Construir URL baseada na rede + hash
   const txUrl = txDisplay
     ? (cert.transactionUrl || (explorerBase[cert.network] ? `${explorerBase[cert.network]}${txDisplay}` : null))
     : null
@@ -131,6 +138,7 @@ export default function CertificateDetail() {
           )}
         </p>
 
+        <p><strong>Rede:</strong> {cert.network === 'besu' ? 'Hyperledger Besu' : cert.network}</p>
         <p><strong>Descrição:</strong> {cert.description}</p>
       </div>
     </main>
