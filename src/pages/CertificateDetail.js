@@ -13,20 +13,42 @@ export default function CertificateDetail() {
   const [error, setError]     = useState(null)
 
   // Converte o payload do backend para a shape usada no front
-  const normalize = (raw) => ({
-    tokenId:        raw.ipfs_hash || raw.cid || raw.tokenId || tokenId,
-    imageUrl:       raw.pinata_url?.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/') || raw.image || raw.image_url,
-    title:          raw.file_name || raw.title || 'Certificado',
-    description:    raw.description || raw.file_name || '',
-    date:           raw.timestamp ? new Date(raw.timestamp).toLocaleString('pt-BR') : '',
-    transaction:    raw.transaction_hash || raw.txHash || raw.tx_hash || null,
-    // NOVO: usar transaction_viewer_url do Firestore se disponível
-    transactionUrl: raw.certificate?.transaction_viewer_url || 
-                    raw.transaction_viewer_url || 
-                    raw.transaction_url || 
-                    null,
-    network: (raw.network || raw.chain || 'besu').toLowerCase(), 
-  })
+  const normalize = (raw) => {
+    // 1. Identifica a URL correta (priorizando a estrutura 'certificate' que parece ser a nova)
+    const correctUrl = raw.certificate?.transaction_viewer_url || 
+                       raw.transaction_viewer_url || 
+                       raw.transaction_url;
+
+    // 2. Tenta extrair o Hash diretamente da URL correta se possível
+    // Ex: .../tx/0xf8aa... -> extrai 0xf8aa...
+    let extractedHash = null;
+    if (correctUrl && correctUrl.includes('/tx/')) {
+       const parts = correctUrl.split('/tx/');
+       if (parts[1]) extractedHash = parts[1];
+    }
+
+    return {
+      tokenId:    raw.ipfs_hash || raw.cid || raw.tokenId || tokenId,
+      imageUrl:   raw.pinata_url?.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/') || raw.image || raw.image_url,
+      title:      raw.file_name || raw.title || 'Certificado',
+      description: raw.description || raw.file_name || '',
+      date:       raw.timestamp ? new Date(raw.timestamp).toLocaleString('pt-BR') : '',
+      
+      // CORREÇÃO AQUI:
+      // Prioridade: Hash extraído da URL > Hash dentro de certificate > Hash na raiz
+      transaction: extractedHash || 
+                   raw.certificate?.transaction_hash || 
+                   raw.certificate?.txHash ||
+                   raw.transaction_hash || 
+                   raw.txHash || 
+                   null,
+
+      transactionUrl: correctUrl || null,
+      
+      // Garante lowercase para evitar falhas no explorerBase
+      network: (raw.network || raw.chain || 'besu').toLowerCase(), 
+    }
+  }
 
   useEffect(() => {
     let cancelled = false
