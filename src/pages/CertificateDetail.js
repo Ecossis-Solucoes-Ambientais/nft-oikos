@@ -25,7 +25,7 @@ export default function CertificateDetail() {
                     raw.transaction_viewer_url || 
                     raw.transaction_url || 
                     null,
-    network:        raw.network || raw.chain || 'besu', // Agora padrão é 'besu'
+    network: (raw.network || raw.chain || 'besu').toLowerCase(), 
   })
 
   useEffect(() => {
@@ -99,7 +99,9 @@ export default function CertificateDetail() {
   // 1. transactionUrl do backend (já formatada pelo gerador de certificados)
   // 2. Construir URL baseada na rede + hash
   const txUrl = txDisplay
-    ? (cert.transactionUrl || (explorerBase[cert.network] ? `${explorerBase[cert.network]}${txDisplay}` : null))
+    ? (explorerBase[cert.network] 
+        ? `${explorerBase[cert.network]}${txDisplay}` 
+        : cert.transactionUrl)
     : null
 
   return (
