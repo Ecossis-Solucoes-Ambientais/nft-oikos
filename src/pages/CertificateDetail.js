@@ -13,42 +13,29 @@ export default function CertificateDetail() {
   const [error, setError]     = useState(null)
 
   // Converte o payload do backend para a shape usada no front
-  const normalize = (raw) => {
-    // 1. Identifica a URL correta (priorizando a estrutura 'certificate' que parece ser a nova)
-    const correctUrl = raw.certificate?.transaction_viewer_url || 
-                       raw.transaction_viewer_url || 
-                       raw.transaction_url;
-
-    // 2. Tenta extrair o Hash diretamente da URL correta se possível
-    // Ex: .../tx/0xf8aa... -> extrai 0xf8aa...
-    let extractedHash = null;
-    if (correctUrl && correctUrl.includes('/tx/')) {
-       const parts = correctUrl.split('/tx/');
-       if (parts[1]) extractedHash = parts[1];
-    }
-
-    return {
-      tokenId:    raw.ipfs_hash || raw.cid || raw.tokenId || tokenId,
-      imageUrl:   raw.pinata_url?.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/') || raw.image || raw.image_url,
-      title:      raw.file_name || raw.title || 'Certificado',
-      description: raw.description || raw.file_name || '',
-      date:       raw.timestamp ? new Date(raw.timestamp).toLocaleString('pt-BR') : '',
-      
-      // CORREÇÃO AQUI:
-      // Prioridade: Hash extraído da URL > Hash dentro de certificate > Hash na raiz
-      transaction: extractedHash || 
-                   raw.certificate?.transaction_hash || 
-                   raw.certificate?.txHash ||
-                   raw.transaction_hash || 
-                   raw.txHash || 
-                   null,
-
-      transactionUrl: correctUrl || null,
-      
-      // Garante lowercase para evitar falhas no explorerBase
-      network: (raw.network || raw.chain || 'besu').toLowerCase(), 
-    }
-  }
+  const normalize = (raw) => ({
+    tokenId:        raw.ipfs_hash || raw.cid || raw.tokenId || tokenId,
+    imageUrl:       raw.pinata_url?.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/') || raw.image || raw.image_url,
+    title:          raw.file_name || raw.title || 'Certificado',
+    description:    raw.description || raw.file_name || '',
+    date:           raw.timestamp ? new Date(raw.timestamp).toLocaleString('pt-BR') : '',
+    
+    // Transaction hash - buscar em várias localizações possíveis
+    transaction:    raw.certificate?.transaction_hash || 
+                    raw.transaction_hash || 
+                    raw.txHash || 
+                    raw.tx_hash || 
+                    null,
+    
+    // Transaction URL completa - PRIORIDADE MÁXIMA (já vem formatada do backend)
+    transactionUrl: raw.certificate?.transaction_viewer_url || 
+                    raw.transaction_viewer_url || 
+                    raw.transaction_url || 
+                    null,
+    
+    // Rede - converter para lowercase
+    network:        (raw.network || raw.chain || 'besu').toLowerCase(),
+  })
 
   useEffect(() => {
     let cancelled = false
@@ -95,10 +82,9 @@ export default function CertificateDetail() {
       }
     }
 
-    // Sempre busca no backend para enriquecer com transaction_hash/network
     run()
     return () => { cancelled = true }
-  }, [tokenId, location.key]) // refaz quando muda o tokenId ou há navegação "igual"
+  }, [tokenId, location.key])
 
   if (loading) return <p className="text-center p-8">Carregando detalhe…</p>
   if (error)   return <p className="text-center p-8 text-red-500">{error}</p>
@@ -109,22 +95,25 @@ export default function CertificateDetail() {
     ? (String(cert.transaction).startsWith('0x') ? cert.transaction : `0x${cert.transaction}`)
     : null
 
-  // URLs dos explorers por rede
+  // URLs dos explorers por rede (usado apenas como FALLBACK)
   const explorerBase = {
-    // sepolia: 'https://sepolia.etherscan.io/tx/',
-    // mainnet: 'https://etherscan.io/tx/',
-    // polygon: 'https://polygonscan.com/tx/',
-    besu: 'https://besu-transaction-viewer-ktrbmj2jvq-rj.a.run.app/tx/',
+    sepolia: 'https://sepolia.etherscan.io/tx/',
+    mainnet: 'https://etherscan.io/tx/',
+    polygon: 'https://polygonscan.com/tx/',
+    besu:    'https://besu-transaction-viewer-ktrbmj2jvq-rj.a.run.app/tx/',
   }
 
-  // Prioridade:
-  // 1. transactionUrl do backend (já formatada pelo gerador de certificados)
-  // 2. Construir URL baseada na rede + hash
-  const txUrl = txDisplay
-    ? (explorerBase[cert.network] 
+  // ============================================================
+  // CORREÇÃO AQUI: PRIORIDADE INVERTIDA
+  // ============================================================
+  // 1º - Usar transactionUrl do backend (JÁ VEM COMPLETA E CORRETA)
+  // 2º - Construir URL usando explorerBase + hash (FALLBACK)
+  // ============================================================
+  const txUrl = cert.transactionUrl 
+    ? cert.transactionUrl  // ← PRIORIDADE 1: Usar URL completa do backend
+    : (txDisplay && explorerBase[cert.network]  // ← FALLBACK: Construir se não tiver
         ? `${explorerBase[cert.network]}${txDisplay}` 
-        : cert.transactionUrl)
-    : null
+        : null)
 
   return (
     <main className="max-w-3xl mx-auto p-8">
