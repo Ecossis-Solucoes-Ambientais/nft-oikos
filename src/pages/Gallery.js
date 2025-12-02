@@ -8,21 +8,27 @@ export default function Gallery() {
   const rawData = usePollingFetch('https://gallery-proxy-service-236688625650.southamerica-east1.run.app', 2 * 60 * 1000)
   console.log('Gallery rawData:', rawData)
 
-  // ② mapeia para a shape que o CertificateCard espera
+  // Proteção: se rawData for null/undefined, usar array vazio
   const list = Array.isArray(rawData)
-  ? rawData
-  : Array.isArray(rawData.certificates)
-    ? rawData.certificates
-    : []
+    ? rawData
+    : Array.isArray(rawData?.certificates)
+      ? rawData.certificates
+      : []
 
   const certs = useMemo(() => {
     return list
-      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+      .filter(item => item?.ipfs_hash) // Filtrar itens inválidos
+      .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0))
       .map(item => ({
         tokenId:  item.ipfs_hash,
-        imageUrl: item.pinata_url.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/'),
-        title:    item.file_name,
-        date:     new Date(item.timestamp).toLocaleDateString('pt-BR'),
+        imageUrl: item.pinata_url?.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/') 
+                  || item.image 
+                  || item.image_url 
+                  || '',
+        title:    item.file_name || 'Certificado',
+        date:     item.timestamp 
+                  ? new Date(item.timestamp).toLocaleDateString('pt-BR') 
+                  : '',
       }))
   }, [list])
 

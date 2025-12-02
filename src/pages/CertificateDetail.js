@@ -3,6 +3,9 @@
 import { useParams, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
+// URL fixa do Transaction Viewer Besu
+const BESU_TX_VIEWER = 'https://besu-transaction-viewer-ktrbmj2jvq-rj.a.run.app/tx/'
+
 export default function CertificateDetail() {
   const { tokenId } = useParams()
   const location = useLocation()
@@ -13,29 +16,41 @@ export default function CertificateDetail() {
   const [error, setError]     = useState(null)
 
   // Converte o payload do backend para a shape usada no front
-  const normalize = (raw) => ({
-    tokenId:        raw.ipfs_hash || raw.cid || raw.tokenId || tokenId,
-    imageUrl:       raw.pinata_url?.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/') || raw.image || raw.image_url,
-    title:          raw.file_name || raw.title || 'Certificado',
-    description:    raw.description || raw.file_name || '',
-    date:           raw.timestamp ? new Date(raw.timestamp).toLocaleString('pt-BR') : '',
-    
-    // Transaction hash - buscar em várias localizações possíveis
-    transaction:    raw.certificate?.tx_hash || 
-                    raw.certificate?.transaction_hash ||
-                    raw.transaction_hash || 
-                    raw.txHash || 
-                    raw.tx_hash || 
-                    null,
-    
-    // URL do visualizador de transação (Besu) - mesma do QR Code
-    transactionUrl: raw.certificate?.transaction_viewer_url || 
-                    raw.transaction_viewer_url || 
-                    null,
-    
-    // Rede
-    network:        raw.certificate?.network || raw.network || raw.chain || 'besu',
-  })
+  const normalize = (raw) => {
+    // Extrair transaction hash de várias localizações possíveis
+    const txHash = raw.certificate?.tx_hash 
+                || raw.certificate?.transaction_hash
+                || raw.transaction_hash 
+                || raw.txHash 
+                || raw.tx_hash 
+                || null
+
+    // Normalizar hash (adicionar 0x se necessário)
+    const normalizedHash = txHash 
+      ? (String(txHash).startsWith('0x') ? txHash : `0x${txHash}`)
+      : null
+
+    // ============================================================
+    // SEMPRE construir URL do Besu - ignorar qualquer URL Sepolia/Etherscan
+    // ============================================================
+    const transactionUrl = normalizedHash 
+      ? `${BESU_TX_VIEWER}${normalizedHash}`
+      : null
+
+    return {
+      tokenId:        raw.ipfs_hash || raw.cid || raw.tokenId || tokenId,
+      imageUrl:       raw.pinata_url?.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/') 
+                      || raw.image 
+                      || raw.image_url
+                      || '',
+      title:          raw.file_name || raw.title || 'Certificado',
+      description:    raw.description || raw.file_name || '',
+      date:           raw.timestamp ? new Date(raw.timestamp).toLocaleString('pt-BR') : '',
+      transaction:    normalizedHash,
+      transactionUrl: transactionUrl,
+      network:        'besu',
+    }
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -90,22 +105,6 @@ export default function CertificateDetail() {
   if (error)   return <p className="text-center p-8 text-red-500">{error}</p>
   if (!cert)   return <p className="text-center p-8">Certificado não disponível</p>
 
-  // Montagem do display da transação
-  const txDisplay = cert.transaction
-    ? (String(cert.transaction).startsWith('0x') ? cert.transaction : `0x${cert.transaction}`)
-    : null
-
-  // URL do Besu Transaction Viewer (fallback caso não venha do backend)
-  const BESU_TX_VIEWER = 'https://besu-transaction-viewer-ktrbmj2jvq-rj.a.run.app/tx/'
-
-  // ============================================================
-  // PRIORIDADE DO LINK:
-  // 1º - transactionUrl do backend (já vem com URL completa do Besu)
-  // 2º - Construir URL do Besu usando o hash
-  // ============================================================
-  const txUrl = cert.transactionUrl 
-    || (txDisplay ? `${BESU_TX_VIEWER}${txDisplay}` : null)
-
   return (
     <main className="max-w-3xl mx-auto p-8">
       <h1 className="text-4xl font-bold mb-6">{cert.title}</h1>
@@ -124,25 +123,25 @@ export default function CertificateDetail() {
 
         <p>
           <strong>Transação:</strong>{' '}
-          {txDisplay ? (
-            txUrl ? (
+          {cert.transaction ? (
+            cert.transactionUrl ? (
               <a
-                href={txUrl}
+                href={cert.transactionUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="text-[#bbd259] hover:underline break-all"
               >
-                {txDisplay}
+                {cert.transaction}
               </a>
             ) : (
-              <span className="break-all">{txDisplay} <em>(sem explorer)</em></span>
+              <span className="break-all">{cert.transaction} <em>(sem explorer)</em></span>
             )
           ) : (
             <span className="text-gray-500">Não disponível</span>
           )}
         </p>
 
-        <p><strong>Rede:</strong> {cert.network === 'besu' ? 'Hyperledger Besu' : cert.network}</p>
+        <p><strong>Rede:</strong> Hyperledger Besu</p>
         <p><strong>Descrição:</strong> {cert.description}</p>
       </div>
     </main>

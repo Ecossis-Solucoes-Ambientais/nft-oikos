@@ -5,23 +5,30 @@ export default function RecentCertificates() {
   // Chama o hook de polling a cada 2 minutos
   const rawData = usePollingFetch('https://gallery-proxy-service-236688625650.southamerica-east1.run.app', 1 * 60 * 1000)
 
+  // Proteção: se rawData for null/undefined, usar array vazio
   const list = Array.isArray(rawData)
-  ? rawData
-  : Array.isArray(rawData.certificates)
-    ? rawData.certificates
-    : []
+    ? rawData
+    : Array.isArray(rawData?.certificates)
+      ? rawData.certificates
+      : []
 
   // Mapeia e pega os 3 mais recentes
   const certs = list
-   .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-   .slice(0, 3)
-   .map(item => ({
-     tokenId:     item.ipfs_hash,
-     imageUrl:    item.pinata_url.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/'),
-     title:       item.file_name,
-     description: item.description || item.file_name,
-     date:        new Date(item.timestamp).toLocaleDateString('pt-BR'),
-   }))
+    .filter(item => item?.ipfs_hash) // Filtrar itens inválidos
+    .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0))
+    .slice(0, 3)
+    .map(item => ({
+      tokenId:     item.ipfs_hash,
+      imageUrl:    item.pinata_url?.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/') 
+                   || item.image 
+                   || item.image_url 
+                   || '',
+      title:       item.file_name || 'Certificado',
+      description: item.description || item.file_name || '',
+      date:        item.timestamp 
+                   ? new Date(item.timestamp).toLocaleDateString('pt-BR') 
+                   : '',
+    }))
 
   if (certs.length === 0) {
     return <p className="text-center py-8">Nenhum certificado recente.</p>
