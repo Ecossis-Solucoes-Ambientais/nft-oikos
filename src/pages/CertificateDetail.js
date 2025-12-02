@@ -21,21 +21,16 @@ export default function CertificateDetail() {
     date:           raw.timestamp ? new Date(raw.timestamp).toLocaleString('pt-BR') : '',
     
     // Transaction hash - buscar em várias localizações possíveis
-    transaction:    raw.certificate?.tx_hash || 
-                    raw.certificate?.transaction_hash ||
+    transaction:    raw.certificate?.transaction_hash || 
                     raw.transaction_hash || 
                     raw.txHash || 
                     raw.tx_hash || 
                     null,
     
-    // Link do QR Code (PRIORIDADE MÁXIMA - mesmo link do certificado físico)
-    qrLink:         raw.certificate?.qr_link || 
-                    raw.qr_link || 
-                    null,
-    
-    // Etherscan URL como fallback
-    etherscanUrl:   raw.certificate?.etherscan_url || 
-                    raw.etherscan_url || 
+    // Transaction URL completa - PRIORIDADE MÁXIMA (já vem formatada do backend)
+    transactionUrl: raw.certificate?.transaction_viewer_url || 
+                    raw.transaction_viewer_url || 
+                    raw.transaction_url || 
                     null,
     
     // Rede - converter para lowercase
@@ -95,28 +90,28 @@ export default function CertificateDetail() {
   if (error)   return <p className="text-center p-8 text-red-500">{error}</p>
   if (!cert)   return <p className="text-center p-8">Certificado não disponível</p>
 
-  // Montagem do display da transação
+  // Montagem do display/URL da transação
   const txDisplay = cert.transaction
     ? (String(cert.transaction).startsWith('0x') ? cert.transaction : `0x${cert.transaction}`)
     : null
 
-  // URLs dos explorers por rede (usado apenas como FALLBACK final)
+  // URLs dos explorers por rede (usado apenas como FALLBACK)
   const explorerBase = {
-    sepolia: 'https://sepolia.etherscan.io/tx/',
-    mainnet: 'https://etherscan.io/tx/',
-    polygon: 'https://polygonscan.com/tx/',
+  //  sepolia: 'https://sepolia.etherscan.io/tx/',
+  //  mainnet: 'https://etherscan.io/tx/',
+  //  polygon: 'https://polygonscan.com/tx/',
     besu:    'https://besu-transaction-viewer-ktrbmj2jvq-rj.a.run.app/tx/',
   }
 
   // ============================================================
-  // PRIORIDADE DO LINK:
-  // 1º - qrLink (mesmo link do QR Code no certificado físico)
-  // 2º - etherscanUrl (link do Etherscan salvo no Firestore)
-  // 3º - Construir URL usando explorerBase + hash (FALLBACK)
+  // CORREÇÃO AQUI: PRIORIDADE INVERTIDA
   // ============================================================
-  const txUrl = cert.qrLink 
-    || cert.etherscanUrl 
-    || (txDisplay && explorerBase[cert.network] 
+  // 1º - Usar transactionUrl do backend (JÁ VEM COMPLETA E CORRETA)
+  // 2º - Construir URL usando explorerBase + hash (FALLBACK)
+  // ============================================================
+  const txUrl = cert.transactionUrl 
+    ? cert.transactionUrl  // ← PRIORIDADE 1: Usar URL completa do backend
+    : (txDisplay && explorerBase[cert.network]  // ← FALLBACK: Construir se não tiver
         ? `${explorerBase[cert.network]}${txDisplay}` 
         : null)
 
