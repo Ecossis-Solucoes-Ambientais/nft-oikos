@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/nft-oikos/static/css/main.0ffe0b37.css",
-    "main.js": "/nft-oikos/static/js/main.19fdd6d3.js",
+    "main.js": "/nft-oikos/static/js/main.0063670d.js",
     "static/js/453.1f2a48d5.chunk.js": "/nft-oikos/static/js/453.1f2a48d5.chunk.js",
     "index.html": "/nft-oikos/index.html",
     "main.0ffe0b37.css.map": "/nft-oikos/static/css/main.0ffe0b37.css.map",
-    "main.19fdd6d3.js.map": "/nft-oikos/static/js/main.19fdd6d3.js.map",
+    "main.0063670d.js.map": "/nft-oikos/static/js/main.0063670d.js.map",
     "453.1f2a48d5.chunk.js.map": "/nft-oikos/static/js/453.1f2a48d5.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.0ffe0b37.css",
-    "static/js/main.19fdd6d3.js"
+    "static/js/main.0063670d.js"
   ]
 }
