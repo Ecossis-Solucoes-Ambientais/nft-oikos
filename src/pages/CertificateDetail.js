@@ -21,16 +21,21 @@ export default function CertificateDetail() {
     date:           raw.timestamp ? new Date(raw.timestamp).toLocaleString('pt-BR') : '',
     
     // Transaction hash - buscar em várias localizações possíveis
-    transaction:    raw.certificate?.transaction_hash || 
+    transaction:    raw.certificate?.tx_hash || 
+                    raw.certificate?.transaction_hash ||
                     raw.transaction_hash || 
                     raw.txHash || 
                     raw.tx_hash || 
                     null,
     
-    // Transaction URL completa - PRIORIDADE MÁXIMA (já vem formatada do backend)
-    transactionUrl: raw.certificate?.transaction_viewer_url || 
-                    raw.transaction_viewer_url || 
-                    raw.transaction_url || 
+    // Link do QR Code (PRIORIDADE MÁXIMA - mesmo link do certificado físico)
+    qrLink:         raw.certificate?.qr_link || 
+                    raw.qr_link || 
+                    null,
+    
+    // Etherscan URL como fallback
+    etherscanUrl:   raw.certificate?.etherscan_url || 
+                    raw.etherscan_url || 
                     null,
     
     // Rede - converter para lowercase
@@ -90,12 +95,12 @@ export default function CertificateDetail() {
   if (error)   return <p className="text-center p-8 text-red-500">{error}</p>
   if (!cert)   return <p className="text-center p-8">Certificado não disponível</p>
 
-  // Montagem do display/URL da transação
+  // Montagem do display da transação
   const txDisplay = cert.transaction
     ? (String(cert.transaction).startsWith('0x') ? cert.transaction : `0x${cert.transaction}`)
     : null
 
-  // URLs dos explorers por rede (usado apenas como FALLBACK)
+  // URLs dos explorers por rede (usado apenas como FALLBACK final)
   const explorerBase = {
     sepolia: 'https://sepolia.etherscan.io/tx/',
     mainnet: 'https://etherscan.io/tx/',
@@ -104,14 +109,14 @@ export default function CertificateDetail() {
   }
 
   // ============================================================
-  // CORREÇÃO AQUI: PRIORIDADE INVERTIDA
+  // PRIORIDADE DO LINK:
+  // 1º - qrLink (mesmo link do QR Code no certificado físico)
+  // 2º - etherscanUrl (link do Etherscan salvo no Firestore)
+  // 3º - Construir URL usando explorerBase + hash (FALLBACK)
   // ============================================================
-  // 1º - Usar transactionUrl do backend (JÁ VEM COMPLETA E CORRETA)
-  // 2º - Construir URL usando explorerBase + hash (FALLBACK)
-  // ============================================================
-  const txUrl = cert.transactionUrl 
-    ? cert.transactionUrl  // ← PRIORIDADE 1: Usar URL completa do backend
-    : (txDisplay && explorerBase[cert.network]  // ← FALLBACK: Construir se não tiver
+  const txUrl = cert.qrLink 
+    || cert.etherscanUrl 
+    || (txDisplay && explorerBase[cert.network] 
         ? `${explorerBase[cert.network]}${txDisplay}` 
         : null)
 
