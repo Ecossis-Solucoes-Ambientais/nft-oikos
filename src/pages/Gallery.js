@@ -21,10 +21,9 @@ export default function Gallery() {
       .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0))
       .map(item => ({
         tokenId:  item.ipfs_hash,
-        imageUrl: item.pinata_url?.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/') 
-                  || item.image 
-                  || item.image_url 
-                  || '',
+        imageUrl: (item.pinata_url && typeof item.pinata_url === 'string')
+          ? item.pinata_url.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/')
+          : item.image || item.image_url || '',
         title:    item.file_name || 'Certificado',
         date:     item.timestamp 
                   ? new Date(item.timestamp).toLocaleDateString('pt-BR') 
