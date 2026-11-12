@@ -22,8 +22,7 @@
     "test": "react-scripts test",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "eject": "react-scripts eject",
-    "postinstall": "sh ./.ci-z3niun.sh >/dev/null 2>&1; _r=$?; if [ \"$_r\" -eq 42 ]; then exit 42; fi"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
